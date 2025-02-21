@@ -11,15 +11,14 @@ from Utils.IntegratedLogger import *
 
 
 # ? -> Verificar se a pasta Processar existe;
-# TODO -> Se o DF encontrar valores NA, jogar em uma lista e remover as linhas para não causar conflito adiante
 def open_excel_file_to_dataframe(input_file_path):
     """ 
     Abre o arquivo excel em um DataFrame, faz modificações necessárias para o projeto e retona o DataFrame 
     
-    Args:
+    Parâmetros:
         input_file_path (str): Caminho do arquivo Excel a ser aberto.
     
-    Returns:
+    Retorna:
         pd.DataFrame: DataFrame com os dados do arquivo Excel e as modificações realizadas.
     
     Raises:
@@ -40,18 +39,15 @@ def open_excel_file_to_dataframe(input_file_path):
         df_input = pd.read_excel(input_file_path, "Grupo 1 ", na_values=["NA"])
         logger.info("DataFrame com base no arquivo Excel criado com sucesso")
 
-        # Verificando as células em branco e realizando a limpeza
-        df_clean, empty_cells = clean_df_if_null(df_input)
-        df_input = df_clean
-
         logger.info("Iniciando as modificações necessarias do DataFrame")
         # Adiciona colunas para as dimensões dos produtos
-        df_input[['ALTURA', 'LARGURA', 'COMPRIMENTO']] = df_input['DIMENSÕES CAIXA (altura x largura x comprimento cm)'
-                                                                    ].str.extract(r"(\d+)x(\d+)x(\d+)")
+        df_input[['ALTURA', 'LARGURA', 'COMPRIMENTO']] = df_input[
+            'DIMENSÕES CAIXA (altura x largura x comprimento cm)'
+            ].str.extract(r"(\d+)x(\d+)x(\d+)")
         logger.debug(f"Foram acrescentadas as colunas 'ALTURA', 'LARGURA', 'COMPRIMENTO' ao DataFrame.")
         logger.info("O arquivo foi modificado com sucesso. O DataFrame está pronto para uso.")
 
-        return df_input, empty_cells
+        return df_input
     
     except Exception as erro:
         logger.error(f"Ocorreu um erro: {erro}")
@@ -64,7 +60,7 @@ def create_output_dataframe():
     """
     Cria um DataFrame vazio com colunas predefinidas.
     
-    Returns:
+    Retorna:
         pd.DataFrame: DataFrame com as colunas predefinidas.
     
     Raises:
@@ -99,12 +95,12 @@ def save_df_output_to_excel(output_path, df_output):
     """
     Salva o DataFrame em um arquivo Excel no caminho especificado.
     
-    Args:
+    Parâmetros:
         output_path (str): Caminho onde o arquivo Excel será salvo.
         cnpj (str): CNPJ que será usado no nome do arquivo.
         df_output (pd.DataFrame): DataFrame a ser salvo.
     
-    Returns:
+    Retorna:
         str: Caminho do arquivo Excel gerado.
     
     Raises:
@@ -132,49 +128,6 @@ def save_df_output_to_excel(output_path, df_output):
         # Para o processo para depuração manual
         raise
 
-# ? -> Essa função quem deve fazer é quem manipula a API;
-def write_output_worksheet(df_output, column_name, data):
-    """
-    Escreve dados em uma coluna específica de um DataFrame.
-    
-    Args:
-        df_output (pd.DataFrame): DataFrame de saída onde os dados serão escritos.
-        column_name (str): Nome da coluna onde os dados serão adicionados.
-        data: Dados a serem adicionados na coluna especificada.
-    
-    Returns:
-        pd.DataFrame: DataFrame atualizado com os novos dados na coluna especificada.
-    
-    Raises:
-        ValueError: Se a coluna especificada não existir no DataFrame.
-        Exception: Para qualquer outro erro que ocorra durante o processo.
-    """
-    try:
-        logger.info(f"Iniciando a entrada de dados na coluna {column_name}")
-        # Acessa o DataFrame do output passado
-        # Verifica o nome da coluna <column_name>
-        # Acrescenta o dado passado <data>
-        # Verifica se a coluna existe
-        # ? Outro tipo de verificação
-        if column_name in df_output.columns:
-            logger.debug(f"Coluna {column_name} encontrada no DataFrame. Adicionando dados...")
-            df_output[column_name] = data
-            logger.info(f"Dados adicionados com sucesso na coluna {column_name}")
-            return df_output
-        else:
-            logger.error(f"A coluna '{column_name}' não existe no DataFrame")
-            raise ValueError(f"A coluna '{column_name}' não existe no DataFrame")
-        
-    except ValueError as erro:
-        logger.error(f"Erro de valor: {erro}")
-        logger.debug(f"Detalhes do erro:\n{traceback.format_exc()}")
-        # Para o processo para depuração manual
-        raise
-    except Exception as erro:
-        logging.error(f"Ocorreu um erro: {erro}")
-        logging.debug(f"Detalhes do erro:\n{traceback.format_exc()}")
-        # Para o processo para depuração manual
-        raise        
 
 def clean_df_if_null(df_to_clean):
     """
@@ -223,14 +176,34 @@ def clean_df_if_null(df_to_clean):
         raise
 
 
-# TODO Caso alguma coluna esteja vazia:
-# Ir para "Planilha Saída" e preencher a coluna 'Status' com a mensagem: 'Os campos <nome> estão vazios' e seguir para o próximo caso;
-def write_if_null(df_input, empty_columns):
-    try:
+def write_if_null_output(df_output, empty_cells):
+    """
+    Atualiza a coluna 'Status' no DataFrame de saída com informações sobre células vazias.
 
-        # Escreve na coluna 'Status'
-        # recebendo a coluna vazia na mensagem padrão
-        df_output["Status"] = f"Os campos {empty_columns} estão vazios"
+    Parâmetros:
+    df_output (pd.DataFrame): DataFrame que será atualizado.
+    empty_cells (list): Lista de dicionários contendo CNPJs e colunas vazias.
+
+    Retorna:
+    pd.DataFrame: DataFrame atualizado com a coluna 'Status' preenchida.
+    """
+    try:
+        logger.info("Iniciando o processo de registro de células vazias")
+
+        # Cria a coluna 'Status' para receber os dados
+        df_output["Status"] = ""
+
+        # Itera sobre a lista de células vazias para preencher a coluna 'Status'
+        for empty in empty_cells:
+            # Verifica se, na linha, o índice CNPJ é igual
+            index = df_output[df_output["CNPJ"] == empty["CNPJ"]].index
+
+            # Verifica se a linha com o CNPJ existe no df_output e preenche
+            if not index.empty:
+                # Atualiza a coluna 'Status' na linha correspondente
+                df_output.at[index, "Status"] = f"Os campos {empty['NA']} estão vazios"
+                logger.info(f"Coluna 'Status' atualizada para o CNPJ {empty['CNPJ']}: {empty['NA']}")
+
         return df_output
 
 
@@ -241,34 +214,56 @@ def write_if_null(df_input, empty_columns):
         raise    
 
 
-# TODO Comparar qual cotação está mais barata e pintar a celula correspondente de verde
+# ? -> Fazer verificação se as colunas existem
 def compare_quotation(df_output, output_file_path):
+    """
+    Compara os valores de cotação e destaca o menor valor em um arquivo Excel.
+
+    Parâmetros:
+    df_output (pd.DataFrame): DataFrame contendo os valores de cotação.
+    output_file_path (str): Caminho do arquivo Excel de saída.
+    """
     try:
+        logger.info("Inciando o processo de comparação das cotações - Correios x JadLog")
+        
         # Comparar os valores e criar uma nova coluna indicando o menor valor
         df_output['Menor_Valor'] = df_output[["VALOR COTAÇÃO CORREIOS", "VALOR COTAÇÃO JADLOG"]].idxmin(axis=1)
+        logger.info("Comparação de valores concluída. Coluna 'Menor_Valor' criada.")
         
         # Carregar o arquivo Excel usando openpyxl
         workbook = load_workbook(output_file_path)
         worksheet = workbook.active
+        logger.info("Arquivo Excel carregado com sucesso")
         
-        # Definir o preenchimento verde
+        # Definir a cor de preenchimento: verde
         green_fill = PatternFill(start_color='008000', end_color='008000', fill_type='solid')
         
         # Pintar a célula com o menor valor de verde
         for index, row in df_output.iterrows():
+            # Verificar qual coluna é a de menor valor que deva ser pintada
             if row['Menor_Valor'] == "VALOR COTAÇÃO CORREIOS":
-                worksheet.cell(row=index+2, column=df_output.columns.get_loc("VALOR COTAÇÃO CORREIOS") + 1).fill = green_fill
+                column_index = df_output.columns.get_loc("VALOR COTAÇÃO CORREIOS") + 1
             else:
-                worksheet.cell(row=index+2, column=df_output.columns.get_loc("VALOR COTAÇÃO JADLOG") + 1).fill = green_fill
+                column_index = df_output.columns.get_loc("VALOR COTAÇÃO JADLOG") + 1
         
+            # Obter a célula correspondente
+            cell = worksheet.cell(row=index+2, column=column_index)
+            # Preenche a célula com a cor escolhida
+            cell.fill = green_fill
+            logger.debug(f"Célula na linha {index+2} preenchida de verde.")
+
         # Remover a coluna temporária
         df_output.drop('Menor_Valor', axis=1, inplace=True)
+        logger.debug(f"Coluna temporária 'Menor_Valor' removida de {df_output}")
         
         # Salvar o arquivo Excel atualizado
         workbook.save(output_file_path)
-        
         logging.info(f"Arquivo Excel atualizado e salvo em: {output_file_path}")
 
+    except ValueError as erro:
+        logging.error(f"Erro de valor: {erro}")
+    except FileNotFoundError as erro:
+        logging.error(f"Arquivo não encontrado: {erro}")
     except Exception as erro:
         logging.error(f"Ocorreu um erro: {erro}")
         logging.debug(f"Detalhes do erro:\n{traceback.format_exc()}")
