@@ -10,7 +10,6 @@ from openpyxl import load_workbook
 from Utils.IntegratedLogger import *
 
 
-# ? -> Verificar se a pasta Processar existe;
 def open_excel_file_to_dataframe(input_file_path):
     """ 
     Abre o arquivo excel em um DataFrame, faz modificações necessárias para o projeto e retona o DataFrame 
@@ -38,14 +37,6 @@ def open_excel_file_to_dataframe(input_file_path):
         # Abre o arquivo excel em DataFrame, na pasta 'Groupo 1' e preenche valores vazios como 'NA'
         df_input = pd.read_excel(input_file_path, "Grupo 1 ", na_values=["NA"])
         logger.info("DataFrame com base no arquivo Excel criado com sucesso")
-
-        logger.info("Iniciando as modificações necessarias do DataFrame")
-        # Adiciona colunas para as dimensões dos produtos
-        df_input[['ALTURA', 'LARGURA', 'COMPRIMENTO']] = df_input[
-            'DIMENSÕES CAIXA (altura x largura x comprimento cm)'
-            ].str.extract(r"(\d+)x(\d+)x(\d+)")
-        logger.debug(f"Foram acrescentadas as colunas 'ALTURA', 'LARGURA', 'COMPRIMENTO' ao DataFrame.")
-        logger.info("O arquivo foi modificado com sucesso. O DataFrame está pronto para uso.")
 
         return df_input
     
@@ -82,6 +73,9 @@ def create_output_dataframe():
         df_output = pd.DataFrame(columns=columns)
         logger.info("DataFrame para receber as saídas criado com sucesso.")
 
+        # Alimenta o DataFrame de saída com as informações já existentes
+        df_output.set_index("CNPJ").join(df_input.set_index("CNPJ"))
+        
         return df_output
     
     except Exception as erro:
@@ -129,6 +123,27 @@ def save_df_output_to_excel(output_path, df_output):
         raise
 
 
+def split_columns_box(df_to_split):
+    try:
+        logger.info("Iniciando as modificações necessarias do DataFrame")
+        # Adiciona colunas para as dimensões dos produtos
+        # ! deixar essa parte em um uma função separada para criar um df_output_quotation ?
+        df_to_split[['ALTURA', 'LARGURA', 'COMPRIMENTO']] = df_to_split[
+            'DIMENSÕES CAIXA (altura x largura x comprimento cm)'
+            ].str.extract(r"(\d+)x(\d+)x(\d+)")
+        logger.debug(f"Foram acrescentadas as colunas 'ALTURA', 'LARGURA', 'COMPRIMENTO' ao DataFrame.")
+        logger.info("O arquivo foi modificado com sucesso. O DataFrame está pronto para uso.")
+        df_input_split = df_to_split
+
+        return df_input_split
+
+    except Exception as erro:
+        logger.error(f"Ocorreu um erro: {erro}")
+        logger.debug(f"Detalhes do erro:\n{traceback.format_exc()}")
+        # Para o processo para depuração manual
+        raise    
+
+
 def clean_df_if_null(df_to_clean):
     """
     Remove linhas com células vazias de um DataFrame e registra os CNPJs e as colunas com células vazias.
@@ -148,9 +163,10 @@ def clean_df_if_null(df_to_clean):
         # Cria uma lista para receber os CNPJs com alguma célula vazia
         empty_cells = []
 
-        #Verifica se há células em branco em cada linha
+        # Verifica se há células em branco em cada linha
         for _, row in df_to_clean.iterows():
             empty_rows = row[row.isnull()].index.tolist()
+            # Registra as linhas vazias na lista como um dicionário
             if empty_rows:
                 empty_cells.append({
                     "CNPJ": row["CNPJ"],
@@ -190,9 +206,6 @@ def write_if_null_output(df_output, empty_cells):
     try:
         logger.info("Iniciando o processo de registro de células vazias")
 
-        # Cria a coluna 'Status' para receber os dados
-        df_output["Status"] = ""
-
         # Itera sobre a lista de células vazias para preencher a coluna 'Status'
         for empty in empty_cells:
             # Verifica se, na linha, o índice CNPJ é igual
@@ -214,7 +227,6 @@ def write_if_null_output(df_output, empty_cells):
         raise    
 
 
-# ? -> Fazer verificação se as colunas existem
 def compare_quotation(df_output, output_file_path):
     """
     Compara os valores de cotação e destaca o menor valor em um arquivo Excel.
@@ -236,11 +248,13 @@ def compare_quotation(df_output, output_file_path):
         logger.info("Arquivo Excel carregado com sucesso")
         
         # Definir a cor de preenchimento: verde
-        green_fill = PatternFill(start_color='008000', end_color='008000', fill_type='solid')
+        green_fill = PatternFill(start_color='008000', 
+                                end_color='008000', 
+                                fill_type='solid')
         
         # Pintar a célula com o menor valor de verde
         for index, row in df_output.iterrows():
-            # Verificar qual coluna é a de menor valor que deva ser pintada
+            # Verificar qual coluna é a de menor valor que deve ser pintada
             if row['Menor_Valor'] == "VALOR COTAÇÃO CORREIOS":
                 column_index = df_output.columns.get_loc("VALOR COTAÇÃO CORREIOS") + 1
             else:
