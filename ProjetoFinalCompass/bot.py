@@ -54,7 +54,6 @@ def main():
         df = open_excel_file_to_dataframe(os.path.join(DEFAULT_PROCESSAR_PATH,'Planilha de Entrada Grupos.xlsx'),logger)
         df_output = create_output_dataframe(df,logger)
         df_filtered, empty_cells = clean_df_if_null(df,logger)
-        
         df_output = write_if_null_output(df_output,empty_cells,logger)
         save_df_output_to_excel(DEFAULT_PROCESSADOS_PATH,df_output,logger)
     except:
