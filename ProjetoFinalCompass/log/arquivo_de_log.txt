@@ -1,0 +1,27 @@
+2025-02-25 21:49:11,328 - INFO: Iniciando busca de dados no site Brasil API.
+2025-02-25 21:49:11,328 - INFO: Lendo dados do arquivo Excel: C:\RPA\RPA_Valor_de_Cotacao\ProjetoFinalCompass\Processar\Planilha de Entrada Grupos.xlsx
+2025-02-25 21:49:11,706 - INFO: CNPJs lidos do Excel: ['02828446000134', '72610132000146', '01874354000128', '04220692000134', '26159125000152', '12146377000132', '06034513000108', '02006030000130', '87640321000139', '75196348000103', '10467359000127', '86937045000102', '95082173000102', '13080788000135', '15358677000173']
+2025-02-25 21:49:11,706 - INFO: Consultando API BrasilAPI para CNPJ: 02828446000134
+2025-02-25 21:49:11,874 - INFO: Consultando API BrasilAPI para CNPJ: 72610132000146
+2025-02-25 21:49:12,207 - INFO: Consultando API BrasilAPI para CNPJ: 01874354000128
+2025-02-25 21:49:12,505 - INFO: Consultando API BrasilAPI para CNPJ: 04220692000134
+2025-02-25 21:49:12,606 - INFO: Consultando API BrasilAPI para CNPJ: 26159125000152
+2025-02-25 21:49:12,687 - INFO: Consultando API BrasilAPI para CNPJ: 12146377000132
+2025-02-25 21:49:12,788 - INFO: Consultando API BrasilAPI para CNPJ: 06034513000108
+2025-02-25 21:49:12,861 - INFO: Consultando API BrasilAPI para CNPJ: 02006030000130
+2025-02-25 21:49:12,938 - INFO: Consultando API BrasilAPI para CNPJ: 87640321000139
+2025-02-25 21:49:13,011 - ERROR: Erro ao consultar CNPJ 87640321000139: 404 Client Error: Not Found for url: https://brasilapi.com.br/api/cnpj/v1/87640321000139
+2025-02-25 21:49:13,012 - INFO: Consultando API BrasilAPI para CNPJ: 75196348000103
+2025-02-25 21:49:13,090 - ERROR: Erro ao consultar CNPJ 75196348000103: 404 Client Error: Not Found for url: https://brasilapi.com.br/api/cnpj/v1/75196348000103
+2025-02-25 21:49:13,090 - INFO: Consultando API BrasilAPI para CNPJ: 10467359000127
+2025-02-25 21:49:13,170 - INFO: Consultando API BrasilAPI para CNPJ: 86937045000102
+2025-02-25 21:49:13,227 - ERROR: Erro ao consultar CNPJ 86937045000102: 404 Client Error: Not Found for url: https://brasilapi.com.br/api/cnpj/v1/86937045000102
+2025-02-25 21:49:13,227 - INFO: Consultando API BrasilAPI para CNPJ: 95082173000102
+2025-02-25 21:49:13,289 - ERROR: Erro ao consultar CNPJ 95082173000102: 404 Client Error: Not Found for url: https://brasilapi.com.br/api/cnpj/v1/95082173000102
+2025-02-25 21:49:13,289 - INFO: Consultando API BrasilAPI para CNPJ: 13080788000135
+2025-02-25 21:49:13,354 - INFO: Consultando API BrasilAPI para CNPJ: 15358677000173
+2025-02-25 21:49:13,421 - INFO: Criando DataFrame com dados da API.
+2025-02-25 21:49:13,442 - INFO: Identificando CNPJs ausentes na API.
+2025-02-25 21:49:13,444 - INFO: CNPJs não encontrados na API: ['87640321000139', '75196348000103', '86937045000102', '95082173000102']
+2025-02-25 21:49:13,444 - INFO: Salvando dados processados em arquivo CSV: C:\RPA\RPA_Valor_de_Cotacao\ProjetoFinalCompass\Processados\dados_processados.csv
+2025-02-25 21:49:13,450 - INFO: Busca de dados finalizada.
