@@ -5,6 +5,7 @@ from datetime import datetime
 from botcity.web import WebBot
 import traceback
 import sys
+from PIL import ImageGrab
 
 class IntegratedLogger:
     '''Classe que integra logs locais e logs do botcity.
@@ -121,7 +122,7 @@ class IntegratedLogger:
                 }
             )
 
-    def warning(self,process_name:str,bot:WebBot):
+    def warning(self,process_name:str):
         '''Insere uma mensagem de level WARNING no log e captura a tela, a mensagen é capturada automaticamente.
         
         # Parâmetros
@@ -142,7 +143,7 @@ class IntegratedLogger:
         list(map(lambda message:self.dev_logger.warning(message),msg_list))
         self.client_logger.warning(msg_reduced)
         image_filepath = os.path.join(self.image_filepath,f'{datetime.now().strftime(self.datetime_file_format)}_RPA_{process_name}.jpg')
-        bot.screenshot(filepath=image_filepath)
+        ImageGrab.grab().save(image_filepath)
         if self.maestro is not None:
             self.maestro.new_log_entry(
                 activity_label=self.activity_label,
@@ -159,7 +160,7 @@ class IntegratedLogger:
             )
         
 
-    def error(self,process_name:str,bot:WebBot):
+    def error(self,process_name:str):
         '''Insere uma mensagem de level ERROR no log e captura a tela, a mensagem é capturada automaticamente.
         
         # Parâmetros
@@ -180,7 +181,7 @@ class IntegratedLogger:
         list(map(lambda message:self.dev_logger.error(message),msg_list))
         self.client_logger.error(msg_reduced)
         image_filepath = os.path.join(self.image_filepath,f'{datetime.now().strftime(self.datetime_file_format)}_RPA_{process_name}.jpg')
-        bot.screenshot(filepath=image_filepath)
+        ImageGrab.grab().save(image_filepath)
         if self.maestro is not None:
             self.maestro.new_log_entry(
                 activity_label=self.activity_label,

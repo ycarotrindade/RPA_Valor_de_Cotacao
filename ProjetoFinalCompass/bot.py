@@ -1,15 +1,16 @@
-# Import for the Web Bot
+# Importa o webbot
 from botcity.web import WebBot, Browser, By
 
-# Import for integration with BotCity Maestro SDK
+# Importa o maestro
 from botcity.maestro import *
 
-# Import other libraries
+# Importa outras bibliotecas necessárias
 from Utils import *
 from webdriver_manager.chrome import ChromeDriverManager
 from dotenv import load_dotenv
 import os
 
+# Define algumas variáveis globais
 load_dotenv(override=True)
 
 IS_MAESTRO_CONNECTED = eval(os.getenv('IS_MAESTRO_CONNECTED'))
@@ -22,40 +23,42 @@ BotMaestroSDK.RAISE_NOT_CONNECTED = not IS_MAESTRO_CONNECTED
 
 def main():
     global BASE_LOG_PATH
+    # Verifica se o maestro está conectado e seleciona de acordo
     if IS_MAESTRO_CONNECTED:
         maestro = BotMaestroSDK.from_sys_args()
         execution = maestro.get_execution()
         BASE_LOG_PATH = execution.parameters.get('BASE_LOG_PATH')
+        DEFAULT_PROCESSAR_PATH = execution.parameters.get('DEFAULT_PROCESSAR_PATH')
+        DEFAULT_PROCESSADOS_PATH = execution.parameters.get('DEFAULT_PROCESSADOS_PATH')
         print(f"Task ID is: {execution.task_id}")
         print(f"Task Parameters are: {execution.parameters}")
     else:
         maestro = None
+        DEFAULT_PROCESSAR_PATH = os.getenv('DEFAULT_PROCESSAR_PATH')
+        DEFAULT_PROCESSADOS_PATH = os.getenv('DEFAULT_PROCESSADOS_PATH')
 
     bot = WebBot()
 
-    # Configure whether or not to run on headless mode
     bot.headless = False
 
-    # Setting default browser to Chrome
+    # Chrome como browser padrão
     bot.browser = Browser.CHROME
 
-    # Setting Webdriver
+    # Informando webdriver
     bot.driver_path = ChromeDriverManager().install()
     
-    processed_items = 0
-    
-    dados = {
-        'TIPO DE SERVIÇO JADLOG':['JADLOG Expresso','JADLOG Econômico','JADLOG Econômico'],
-        'DIMENSÕES CAIXA (altura x largura x comprimento cm)':['36 x 28 x 28','24 x 16 x 8','36 x 28 x 28'],
-        'PESO DO PRODUTO':["29","15","11"],
-        'CEP': ['41940000','70310500','25569900'],
-        'VALOR DO PEDIDO':['872,5','295,3','945,4'],
-        'VALOR COTAÇÃO JADLOG':[None,None,None]
-    }
-    
-    df = pd.DataFrame(dados)
+    # Iniciando logger 
     logger = IntegratedLogger(maestro=maestro,filepath=BASE_LOG_PATH,activity_label=ACTIVITY_LABEL)
-    df_copy, sucess_items = catchJadlogPrice(bot=bot, maestro=maestro, df=df,logger=logger)
+    try:
+        logger.info('='*10 + " Início do Processo: RPA VALOR COTAÇÃO " + "="*10)
+        df = open_excel_file_to_dataframe(os.path.join(DEFAULT_PROCESSAR_PATH,'Planilha de Entrada Grupos.xlsx'),logger)
+        df_output = create_output_dataframe(df,logger)
+        df_filtered, empty_cells = clean_df_if_null(df,logger)
+        
+        df_output = write_if_null_output(df_output,empty_cells,logger)
+        save_df_output_to_excel(DEFAULT_PROCESSADOS_PATH,df_output,logger)
+    except:
+        logger.error('Execução RPA_Valor_Cotação')
     
     
     
