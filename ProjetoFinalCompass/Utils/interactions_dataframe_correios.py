@@ -24,6 +24,7 @@ def interaction_df_correios(
     """
 
     for index, row in df_filtered.iterrows():
+        cnpj = row["CNPJ"] # depois do try dentro do for index, row in df_filtered.iterrows() aqui diz linha 27
         try:
             # log: inicia teste {index} das variáveis usadas no site correios.
             logger.info(f'Inicia teste {index} das variáveis usadas no site dos correios')
@@ -36,7 +37,7 @@ def interaction_df_correios(
             # log: "variáveis teste {index} aprovadas."
             logger.info(f'variáveis teste {index} aprovadas')
         except Exception as err:
-            df_output.at[index, "STATUS"] = err
+            df_output.loc[df_output["CNPJ"] == cnpj, "STATUS"] = err # em todos os df_output.loc[df_output["CNPJ"] == cnpj, "STATUS"] = err  
             # tratamento de erro "variáveis teste {index} não aprovadas."
             logger.error('Teste de variáveis')
             continue
@@ -50,13 +51,16 @@ def interaction_df_correios(
                 cep_destiny=cep_destiny,
                 weight=weight,
             )
-            df_output.at[index, "PRAZO DE ENTREGA CORREIOS"] = deliver_time
-            df_output.at[index, "VALOR COTAÇÃO CORREIOS"] = total_price
+            df_output.loc[df_output["CNPJ"] == cnpj, "PRAZO DE ENTREGA CORREIOS"] = (
+                deliver_time
+            )
+            df_output.loc[df_output["CNPJ"] == cnpj, "VALOR COTAÇÃO CORREIOS"] = (
+                total_price
+            )
             # log: dados extraídos na iteração {index} no site dos correios.
             logger.info(f'dados extraídos na iteração {index} no site dos correios.')
-
         except Exception as err:
-            df_output.at[index, "STATUS"] = err
+            df_output.loc[df_output["CNPJ"] == cnpj, "STATUS"] = err
             # tratar erro: problema na iteração {index} no site dos correios
             logger.error(f'problema na iteração {index} no site dos correios')
             continue

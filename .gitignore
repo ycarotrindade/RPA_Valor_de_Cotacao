@@ -4,6 +4,8 @@
 test.py
 Logs/
 *.zip
+cnpj*
+*teste.xlsx
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
