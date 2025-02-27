@@ -213,7 +213,7 @@ def write_if_null_output(df_output, empty_cells:list,logger):
             # Verifica se a linha com o CNPJ existe no df_output e preenche
             if not index.empty:
                 # Atualiza a coluna 'Status' na linha correspondente
-                df_output.at[index, "Status"] = f"Os campos {empty['NA']} estão vazios"
+                df_output.at[index, "STATUS"] = f"Os campos {empty['NA']} estão vazios"
                 logger.info(f"Coluna 'Status' atualizada para o CNPJ {empty['CNPJ']}: {empty['NA']}")
 
         return df_output

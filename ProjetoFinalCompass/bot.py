@@ -9,6 +9,7 @@ from Utils import *
 from webdriver_manager.chrome import ChromeDriverManager
 from dotenv import load_dotenv
 import os
+import pandas as pd
 
 # Define algumas variáveis globais
 load_dotenv(override=True)
@@ -55,6 +56,13 @@ def main():
         df_output = create_output_dataframe(df,logger)
         df_filtered, empty_cells = clean_df_if_null(df,logger)
         df_output = write_if_null_output(df_output,empty_cells,logger)
+        dados = pd.read_csv(r'ProjetoFinalCompass\Processar\dados_processados.csv')
+        df_filtered = pd.merge(df_filtered,dados,on='CNPJ',how='left')
+        df_filtered = df_filtered.drop(['Email'],axis=1)
+        df_filtered, empty_cells = clean_df_if_null(df_filtered,logger)
+        df_output = write_if_null_output(df_output,empty_cells,logger)
+        df_filtered, df_output = interaction_df_correios(df_filtered=df_filtered,df_output=df_output,bot=bot,logger=logger)
+        df_filtered.to_excel(r'ProjetoFinalCompass\Processados\teste.xlsx',index=False)
         save_df_output_to_excel(DEFAULT_PROCESSADOS_PATH,df_output,logger)
     except:
         logger.error('Execução RPA_Valor_Cotação')
