@@ -1,27 +1,239 @@
-2025-02-25 21:49:11,328 - INFO: Iniciando busca de dados no site Brasil API.
-2025-02-25 21:49:11,328 - INFO: Lendo dados do arquivo Excel: C:\RPA\RPA_Valor_de_Cotacao\ProjetoFinalCompass\Processar\Planilha de Entrada Grupos.xlsx
-2025-02-25 21:49:11,706 - INFO: CNPJs lidos do Excel: ['02828446000134', '72610132000146', '01874354000128', '04220692000134', '26159125000152', '12146377000132', '06034513000108', '02006030000130', '87640321000139', '75196348000103', '10467359000127', '86937045000102', '95082173000102', '13080788000135', '15358677000173']
-2025-02-25 21:49:11,706 - INFO: Consultando API BrasilAPI para CNPJ: 02828446000134
-2025-02-25 21:49:11,874 - INFO: Consultando API BrasilAPI para CNPJ: 72610132000146
-2025-02-25 21:49:12,207 - INFO: Consultando API BrasilAPI para CNPJ: 01874354000128
-2025-02-25 21:49:12,505 - INFO: Consultando API BrasilAPI para CNPJ: 04220692000134
-2025-02-25 21:49:12,606 - INFO: Consultando API BrasilAPI para CNPJ: 26159125000152
-2025-02-25 21:49:12,687 - INFO: Consultando API BrasilAPI para CNPJ: 12146377000132
-2025-02-25 21:49:12,788 - INFO: Consultando API BrasilAPI para CNPJ: 06034513000108
-2025-02-25 21:49:12,861 - INFO: Consultando API BrasilAPI para CNPJ: 02006030000130
-2025-02-25 21:49:12,938 - INFO: Consultando API BrasilAPI para CNPJ: 87640321000139
-2025-02-25 21:49:13,011 - ERROR: Erro ao consultar CNPJ 87640321000139: 404 Client Error: Not Found for url: https://brasilapi.com.br/api/cnpj/v1/87640321000139
-2025-02-25 21:49:13,012 - INFO: Consultando API BrasilAPI para CNPJ: 75196348000103
-2025-02-25 21:49:13,090 - ERROR: Erro ao consultar CNPJ 75196348000103: 404 Client Error: Not Found for url: https://brasilapi.com.br/api/cnpj/v1/75196348000103
-2025-02-25 21:49:13,090 - INFO: Consultando API BrasilAPI para CNPJ: 10467359000127
-2025-02-25 21:49:13,170 - INFO: Consultando API BrasilAPI para CNPJ: 86937045000102
-2025-02-25 21:49:13,227 - ERROR: Erro ao consultar CNPJ 86937045000102: 404 Client Error: Not Found for url: https://brasilapi.com.br/api/cnpj/v1/86937045000102
-2025-02-25 21:49:13,227 - INFO: Consultando API BrasilAPI para CNPJ: 95082173000102
-2025-02-25 21:49:13,289 - ERROR: Erro ao consultar CNPJ 95082173000102: 404 Client Error: Not Found for url: https://brasilapi.com.br/api/cnpj/v1/95082173000102
-2025-02-25 21:49:13,289 - INFO: Consultando API BrasilAPI para CNPJ: 13080788000135
-2025-02-25 21:49:13,354 - INFO: Consultando API BrasilAPI para CNPJ: 15358677000173
-2025-02-25 21:49:13,421 - INFO: Criando DataFrame com dados da API.
-2025-02-25 21:49:13,442 - INFO: Identificando CNPJs ausentes na API.
-2025-02-25 21:49:13,444 - INFO: CNPJs n�o encontrados na API: ['87640321000139', '75196348000103', '86937045000102', '95082173000102']
-2025-02-25 21:49:13,444 - INFO: Salvando dados processados em arquivo CSV: C:\RPA\RPA_Valor_de_Cotacao\ProjetoFinalCompass\Processados\dados_processados.csv
-2025-02-25 21:49:13,450 - INFO: Busca de dados finalizada.
+2025-02-27 19:12:43,306 - INFO: Iniciando busca de dados no site Brasil API.
+2025-02-27 19:12:43,306 - INFO: Lendo dados do arquivo Excel
+2025-02-27 19:12:43,706 - INFO: CNPJs lidos do Excel: ['02828446000134', '72610132000146', '01874354000128', '04220692000134', '26159125000152', '12146377000132', '06034513000108', '02006030000130', '87640321000139', '75196348000103', '10467359000127', '86937045000102', '95082173000102', '13080788000135', '15358677000173']
+2025-02-27 19:12:43,706 - INFO: Consultando API BrasilAPI para CNPJ: 02828446000134
+2025-02-27 19:12:43,800 - ERROR: Erro ao consultar CNPJ 02828446000134: 429 Client Error: Too Many Requests for url: https://brasilapi.com.br/api/cnpj/v1/02828446000134
+2025-02-27 19:12:43,800 - INFO: Consultando API BrasilAPI para CNPJ: 72610132000146
+2025-02-27 19:12:43,894 - ERROR: Erro ao consultar CNPJ 72610132000146: 429 Client Error: Too Many Requests for url: https://brasilapi.com.br/api/cnpj/v1/72610132000146
+2025-02-27 19:12:43,894 - INFO: Consultando API BrasilAPI para CNPJ: 01874354000128
+2025-02-27 19:12:43,978 - ERROR: Erro ao consultar CNPJ 01874354000128: 429 Client Error: Too Many Requests for url: https://brasilapi.com.br/api/cnpj/v1/01874354000128
+2025-02-27 19:12:43,979 - INFO: Consultando API BrasilAPI para CNPJ: 04220692000134
+2025-02-27 19:12:44,041 - ERROR: Erro ao consultar CNPJ 04220692000134: 429 Client Error: Too Many Requests for url: https://brasilapi.com.br/api/cnpj/v1/04220692000134
+2025-02-27 19:12:44,042 - INFO: Consultando API BrasilAPI para CNPJ: 26159125000152
+2025-02-27 19:12:44,121 - ERROR: Erro ao consultar CNPJ 26159125000152: 429 Client Error: Too Many Requests for url: https://brasilapi.com.br/api/cnpj/v1/26159125000152
+2025-02-27 19:12:44,122 - INFO: Consultando API BrasilAPI para CNPJ: 12146377000132
+2025-02-27 19:12:44,178 - ERROR: Erro ao consultar CNPJ 12146377000132: 429 Client Error: Too Many Requests for url: https://brasilapi.com.br/api/cnpj/v1/12146377000132
+2025-02-27 19:12:44,178 - INFO: Consultando API BrasilAPI para CNPJ: 06034513000108
+2025-02-27 19:12:44,256 - ERROR: Erro ao consultar CNPJ 06034513000108: 429 Client Error: Too Many Requests for url: https://brasilapi.com.br/api/cnpj/v1/06034513000108
+2025-02-27 19:12:44,256 - INFO: Consultando API BrasilAPI para CNPJ: 02006030000130
+2025-02-27 19:12:44,334 - ERROR: Erro ao consultar CNPJ 02006030000130: 429 Client Error: Too Many Requests for url: https://brasilapi.com.br/api/cnpj/v1/02006030000130
+2025-02-27 19:12:44,334 - INFO: Consultando API BrasilAPI para CNPJ: 87640321000139
+2025-02-27 19:12:44,413 - ERROR: Erro ao consultar CNPJ 87640321000139: 429 Client Error: Too Many Requests for url: https://brasilapi.com.br/api/cnpj/v1/87640321000139
+2025-02-27 19:12:44,413 - INFO: Consultando API BrasilAPI para CNPJ: 75196348000103
+2025-02-27 19:12:44,491 - ERROR: Erro ao consultar CNPJ 75196348000103: 429 Client Error: Too Many Requests for url: https://brasilapi.com.br/api/cnpj/v1/75196348000103
+2025-02-27 19:12:44,491 - INFO: Consultando API BrasilAPI para CNPJ: 10467359000127
+2025-02-27 19:12:44,553 - ERROR: Erro ao consultar CNPJ 10467359000127: 429 Client Error: Too Many Requests for url: https://brasilapi.com.br/api/cnpj/v1/10467359000127
+2025-02-27 19:12:44,553 - INFO: Consultando API BrasilAPI para CNPJ: 86937045000102
+2025-02-27 19:12:44,625 - ERROR: Erro ao consultar CNPJ 86937045000102: 429 Client Error: Too Many Requests for url: https://brasilapi.com.br/api/cnpj/v1/86937045000102
+2025-02-27 19:12:44,626 - INFO: Consultando API BrasilAPI para CNPJ: 95082173000102
+2025-02-27 19:12:44,678 - ERROR: Erro ao consultar CNPJ 95082173000102: 429 Client Error: Too Many Requests for url: https://brasilapi.com.br/api/cnpj/v1/95082173000102
+2025-02-27 19:12:44,678 - INFO: Consultando API BrasilAPI para CNPJ: 13080788000135
+2025-02-27 19:12:44,754 - ERROR: Erro ao consultar CNPJ 13080788000135: 429 Client Error: Too Many Requests for url: https://brasilapi.com.br/api/cnpj/v1/13080788000135
+2025-02-27 19:12:44,755 - INFO: Consultando API BrasilAPI para CNPJ: 15358677000173
+2025-02-27 19:12:44,826 - ERROR: Erro ao consultar CNPJ 15358677000173: 429 Client Error: Too Many Requests for url: https://brasilapi.com.br/api/cnpj/v1/15358677000173
+2025-02-27 19:12:44,826 - INFO: Criando DataFrame com dados da API.
+2025-02-27 19:12:44,826 - ERROR: Erro ao criar DataFrame: "None of [Index(['cnpj', 'razao_social', 'nome_fantasia', 'situacao_cadastral',\n       'logradouro', 'numero', 'municipio', 'cep',\n       'descricao_identificador_matriz_filial', 'ddd_telefone_1', 'email',\n       'status'],\n      dtype='object')] are in the [columns]"
+2025-02-27 19:12:44,826 - INFO: Busca de dados finalizada.
+2025-02-27 19:16:54,024 - INFO - Iniciando execução do script com arquivo Excel: C:\Users\felin\Downloads\RPA_Challenge-main\Planilhas Excel\dados_completos.xlsx
+2025-02-27 19:16:54,394 - INFO - Arquivo C:\Users\felin\Downloads\RPA_Challenge-main\Planilhas Excel\dados_completos.xlsx carregado com sucesso!
+2025-02-27 19:16:54,394 - INFO - Inicializando navegador Chrome
+2025-02-27 19:16:54,394 - INFO - ====== WebDriver manager ======
+2025-02-27 19:16:55,671 - INFO - Get LATEST chromedriver version for google-chrome
+2025-02-27 19:16:55,765 - INFO - Get LATEST chromedriver version for google-chrome
+2025-02-27 19:16:55,843 - INFO - Driver [C:\Users\felin\.wdm\drivers\chromedriver\win64\133.0.6943.141\chromedriver-win32/chromedriver.exe] found in cache
+2025-02-27 19:16:57,506 - INFO - Navegador Chrome inicializado com sucesso!
+2025-02-27 19:16:57,506 - INFO - Acessando o site: https://www.rpachallenge.com/
+2025-02-27 19:17:00,445 - INFO - Site https://www.rpachallenge.com/ acessado com sucesso!
+2025-02-27 19:17:00,445 - INFO - Iniciando desafio
+2025-02-27 19:17:00,557 - INFO - Desafio iniciado com sucesso!
+2025-02-27 19:17:00,557 - INFO - Preenchendo formulário com dados do arquivo Excel
+2025-02-27 19:17:00,557 - INFO - Capturando XPaths dos campos do formulário
+2025-02-27 19:17:01,617 - INFO - Linha 1 inserida com sucesso!
+2025-02-27 19:17:02,511 - INFO - Linha 2 inserida com sucesso!
+2025-02-27 19:17:03,149 - INFO - Linha 3 inserida com sucesso!
+2025-02-27 19:17:03,792 - INFO - Linha 4 inserida com sucesso!
+2025-02-27 19:17:04,431 - INFO - Linha 5 inserida com sucesso!
+2025-02-27 19:17:05,079 - INFO - Linha 6 inserida com sucesso!
+2025-02-27 19:17:05,762 - INFO - Linha 7 inserida com sucesso!
+2025-02-27 19:17:06,769 - INFO - Linha 8 inserida com sucesso!
+2025-02-27 19:17:07,423 - INFO - Linha 9 inserida com sucesso!
+2025-02-27 19:17:08,072 - INFO - Linha 10 inserida com sucesso!
+2025-02-27 19:17:08,083 - ERROR - Erro ao inserir dados da linha 11: Message: no such element: Unable to locate element: {"method":"xpath","selector":"//input[@ng-reflect-name="labelFirstName"]"}
+  (Session info: chrome=133.0.6943.127); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+	GetHandleVerifier [0x00D10B43+25139]
+	(No symbol) [0x00CA13F4]
+	(No symbol) [0x00B804E3]
+	(No symbol) [0x00BC83D7]
+	(No symbol) [0x00BC872B]
+	(No symbol) [0x00C11002]
+	(No symbol) [0x00BED014]
+	(No symbol) [0x00C0E778]
+	(No symbol) [0x00BECDC6]
+	(No symbol) [0x00BBBDE9]
+	(No symbol) [0x00BBD124]
+	GetHandleVerifier [0x01014373+3185251]
+	GetHandleVerifier [0x0103291A+3309578]
+	GetHandleVerifier [0x0102CF42+3286578]
+	GetHandleVerifier [0x00DA7AE0+643536]
+	(No symbol) [0x00CAA20D]
+	(No symbol) [0x00CA70B8]
+	(No symbol) [0x00CA7257]
+	(No symbol) [0x00C99E00]
+	BaseThreadInitThunk [0x766DFCC9+25]
+	RtlGetAppContainerNamedObjectPath [0x775E82AE+286]
+	RtlGetAppContainerNamedObjectPath [0x775E827E+238]
+
+2025-02-27 19:17:08,083 - INFO - Capturando tempo de execução
+2025-02-27 19:17:08,120 - INFO - Tempo de execução capturado: Your success rate is 0% ( 0 out of 70 fields) in 7519 milliseconds
+2025-02-27 19:17:08,120 - INFO - Tempo de execução: Your success rate is 0% ( 0 out of 70 fields) in 7519 milliseconds
+2025-02-27 19:17:08,120 - INFO - Tirando screenshot da página e salvando em C:\RPA\RPA_Valor_de_Cotacao\ProjetoFinalCompass\img
+2025-02-27 19:17:08,361 - INFO - Screenshot salvo com sucesso em C:\RPA\RPA_Valor_de_Cotacao\ProjetoFinalCompass\img
+2025-02-27 19:17:08,361 - INFO - Execução finalizada com sucesso!
+2025-02-27 19:17:08,361 - INFO - Fechando navegador Chrome
+2025-02-27 19:17:10,682 - INFO - Navegador Chrome fechado com sucesso!
+2025-02-27 19:19:52,544 - INFO: Iniciando busca de dados no site Brasil API.
+2025-02-27 19:19:52,544 - INFO: Lendo dados do arquivo Excel
+2025-02-27 19:19:52,937 - INFO: CNPJs lidos do Excel: ['02828446000134', '72610132000146', '01874354000128', '04220692000134', '26159125000152', '12146377000132', '06034513000108', '02006030000130', '87640321000139', '75196348000103', '10467359000127', '86937045000102', '95082173000102', '13080788000135', '15358677000173']
+2025-02-27 19:19:52,937 - INFO: Consultando API BrasilAPI para CNPJ: 02828446000134
+2025-02-27 19:19:53,870 - ERROR: Erro ao consultar CNPJ 02828446000134: 429 Client Error: Too Many Requests for url: https://brasilapi.com.br/api/cnpj/v1/02828446000134
+2025-02-27 19:19:53,870 - INFO: Consultando API BrasilAPI para CNPJ: 72610132000146
+2025-02-27 19:19:54,526 - ERROR: Erro ao consultar CNPJ 72610132000146: 429 Client Error: Too Many Requests for url: https://brasilapi.com.br/api/cnpj/v1/72610132000146
+2025-02-27 19:19:54,526 - INFO: Consultando API BrasilAPI para CNPJ: 01874354000128
+2025-02-27 19:19:55,138 - INFO: Consultando API BrasilAPI para CNPJ: 04220692000134
+2025-02-27 19:19:55,964 - INFO: Consultando API BrasilAPI para CNPJ: 26159125000152
+2025-02-27 19:19:56,458 - INFO: Consultando API BrasilAPI para CNPJ: 12146377000132
+2025-02-27 19:19:57,242 - INFO: Consultando API BrasilAPI para CNPJ: 06034513000108
+2025-02-27 19:19:57,690 - INFO: Consultando API BrasilAPI para CNPJ: 02006030000130
+2025-02-27 19:19:57,748 - INFO: Consultando API BrasilAPI para CNPJ: 87640321000139
+2025-02-27 19:19:57,842 - ERROR: Erro ao consultar CNPJ 87640321000139: 404 Client Error: Not Found for url: https://brasilapi.com.br/api/cnpj/v1/87640321000139
+2025-02-27 19:19:57,842 - INFO: Consultando API BrasilAPI para CNPJ: 75196348000103
+2025-02-27 19:19:58,221 - ERROR: Erro ao consultar CNPJ 75196348000103: 404 Client Error: Not Found for url: https://brasilapi.com.br/api/cnpj/v1/75196348000103
+2025-02-27 19:19:58,221 - INFO: Consultando API BrasilAPI para CNPJ: 10467359000127
+2025-02-27 19:19:58,689 - INFO: Consultando API BrasilAPI para CNPJ: 86937045000102
+2025-02-27 19:19:58,773 - ERROR: Erro ao consultar CNPJ 86937045000102: 404 Client Error: Not Found for url: https://brasilapi.com.br/api/cnpj/v1/86937045000102
+2025-02-27 19:19:58,773 - INFO: Consultando API BrasilAPI para CNPJ: 95082173000102
+2025-02-27 19:19:59,217 - ERROR: Erro ao consultar CNPJ 95082173000102: 404 Client Error: Not Found for url: https://brasilapi.com.br/api/cnpj/v1/95082173000102
+2025-02-27 19:19:59,217 - INFO: Consultando API BrasilAPI para CNPJ: 13080788000135
+2025-02-27 19:19:59,582 - INFO: Consultando API BrasilAPI para CNPJ: 15358677000173
+2025-02-27 19:20:00,041 - INFO: Criando DataFrame com dados da API.
+2025-02-27 19:20:00,048 - INFO: Identificando CNPJs ausentes na API.
+2025-02-27 19:20:00,048 - INFO: CNPJs n�o encontrados na API: ['02828446000134', '72610132000146', '87640321000139', '75196348000103', '86937045000102', '95082173000102']
+2025-02-27 19:20:00,048 - INFO: Salvando dados processados em arquivo CSV: C:\RPA\RPA_Valor_de_Cotacao\ProjetoFinalCompass\Processados\dados_processados.csv
+2025-02-27 19:20:00,237 - INFO: Busca de dados finalizada.
+2025-02-27 19:21:01,263 - INFO - Iniciando execução do script com arquivo Excel: C:\RPA\RPA_Valor_de_Cotacao\ProjetoFinalCompass\Processar\dados_completos.xlsx
+2025-02-27 19:21:01,645 - INFO - Arquivo C:\RPA\RPA_Valor_de_Cotacao\ProjetoFinalCompass\Processar\dados_completos.xlsx carregado com sucesso!
+2025-02-27 19:21:01,645 - INFO - Inicializando navegador Chrome
+2025-02-27 19:21:01,645 - INFO - ====== WebDriver manager ======
+2025-02-27 19:21:02,854 - INFO - Get LATEST chromedriver version for google-chrome
+2025-02-27 19:21:03,202 - INFO - Get LATEST chromedriver version for google-chrome
+2025-02-27 19:21:03,265 - INFO - Driver [C:\Users\felin\.wdm\drivers\chromedriver\win64\133.0.6943.141\chromedriver-win32/chromedriver.exe] found in cache
+2025-02-27 19:21:04,786 - INFO - Navegador Chrome inicializado com sucesso!
+2025-02-27 19:21:04,786 - INFO - Acessando o site: https://www.rpachallenge.com/
+2025-02-27 19:21:07,710 - INFO - Site https://www.rpachallenge.com/ acessado com sucesso!
+2025-02-27 19:21:07,710 - INFO - Iniciando desafio
+2025-02-27 19:21:07,826 - INFO - Desafio iniciado com sucesso!
+2025-02-27 19:21:07,826 - INFO - Preenchendo formulário com dados do arquivo Excel
+2025-02-27 19:21:07,826 - INFO - Capturando XPaths dos campos do formulário
+2025-02-27 19:21:08,620 - INFO - Linha 1 inserida com sucesso!
+2025-02-27 19:21:09,455 - INFO - Linha 2 inserida com sucesso!
+2025-02-27 19:21:10,437 - INFO - Linha 3 inserida com sucesso!
+2025-02-27 19:21:11,403 - INFO - Linha 4 inserida com sucesso!
+2025-02-27 19:21:12,235 - INFO - Linha 5 inserida com sucesso!
+2025-02-27 19:21:13,182 - INFO - Linha 6 inserida com sucesso!
+2025-02-27 19:21:14,171 - INFO - Linha 7 inserida com sucesso!
+2025-02-27 19:21:15,171 - INFO - Linha 8 inserida com sucesso!
+2025-02-27 19:21:15,823 - INFO - Linha 9 inserida com sucesso!
+2025-02-27 19:21:16,459 - INFO - Linha 10 inserida com sucesso!
+2025-02-27 19:21:16,469 - ERROR - Erro ao inserir dados da linha 11: Message: no such element: Unable to locate element: {"method":"xpath","selector":"//input[@ng-reflect-name="labelFirstName"]"}
+  (Session info: chrome=133.0.6943.127); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+	GetHandleVerifier [0x00D10B43+25139]
+	(No symbol) [0x00CA13F4]
+	(No symbol) [0x00B804E3]
+	(No symbol) [0x00BC83D7]
+	(No symbol) [0x00BC872B]
+	(No symbol) [0x00C11002]
+	(No symbol) [0x00BED014]
+	(No symbol) [0x00C0E778]
+	(No symbol) [0x00BECDC6]
+	(No symbol) [0x00BBBDE9]
+	(No symbol) [0x00BBD124]
+	GetHandleVerifier [0x01014373+3185251]
+	GetHandleVerifier [0x0103291A+3309578]
+	GetHandleVerifier [0x0102CF42+3286578]
+	GetHandleVerifier [0x00DA7AE0+643536]
+	(No symbol) [0x00CAA20D]
+	(No symbol) [0x00CA70B8]
+	(No symbol) [0x00CA7257]
+	(No symbol) [0x00C99E00]
+	BaseThreadInitThunk [0x766DFCC9+25]
+	RtlGetAppContainerNamedObjectPath [0x775E82AE+286]
+	RtlGetAppContainerNamedObjectPath [0x775E827E+238]
+
+2025-02-27 19:21:16,469 - INFO - Capturando tempo de execução
+2025-02-27 19:21:16,508 - INFO - Tempo de execução capturado: Your success rate is 0% ( 0 out of 70 fields) in 8636 milliseconds
+2025-02-27 19:21:16,508 - INFO - Tempo de execução: Your success rate is 0% ( 0 out of 70 fields) in 8636 milliseconds
+2025-02-27 19:21:16,508 - INFO - Tirando screenshot da página e salvando em C:\RPA\RPA_Valor_de_Cotacao\ProjetoFinalCompass\img
+2025-02-27 19:21:16,723 - INFO - Screenshot salvo com sucesso em C:\RPA\RPA_Valor_de_Cotacao\ProjetoFinalCompass\img
+2025-02-27 19:21:16,723 - INFO - Execução finalizada com sucesso!
+2025-02-27 19:21:16,723 - INFO - Fechando navegador Chrome
+2025-02-27 19:21:18,989 - INFO - Navegador Chrome fechado com sucesso!
+2025-02-27 19:22:28,319 - INFO - Iniciando execução do script com arquivo Excel: C:\RPA\RPA_Valor_de_Cotacao\ProjetoFinalCompass\Processar\dados_completos.xlsx
+2025-02-27 19:22:28,693 - INFO - Arquivo C:\RPA\RPA_Valor_de_Cotacao\ProjetoFinalCompass\Processar\dados_completos.xlsx carregado com sucesso!
+2025-02-27 19:22:28,693 - INFO - Inicializando navegador Chrome
+2025-02-27 19:22:28,693 - INFO - ====== WebDriver manager ======
+2025-02-27 19:22:29,891 - INFO - Get LATEST chromedriver version for google-chrome
+2025-02-27 19:22:29,970 - INFO - Get LATEST chromedriver version for google-chrome
+2025-02-27 19:22:30,043 - INFO - Driver [C:\Users\felin\.wdm\drivers\chromedriver\win64\133.0.6943.141\chromedriver-win32/chromedriver.exe] found in cache
+2025-02-27 19:22:31,626 - INFO - Navegador Chrome inicializado com sucesso!
+2025-02-27 19:22:31,629 - INFO - Acessando o site: https://www.rpachallenge.com/
+2025-02-27 19:22:33,498 - INFO - Site https://www.rpachallenge.com/ acessado com sucesso!
+2025-02-27 19:22:33,498 - INFO - Iniciando desafio
+2025-02-27 19:22:33,664 - INFO - Desafio iniciado com sucesso!
+2025-02-27 19:22:33,664 - INFO - Preenchendo formulário com dados do arquivo Excel
+2025-02-27 19:22:33,664 - INFO - Capturando XPaths dos campos do formulário
+2025-02-27 19:22:34,439 - INFO - Linha 1 inserida com sucesso!
+2025-02-27 19:22:35,127 - INFO - Linha 2 inserida com sucesso!
+2025-02-27 19:22:36,085 - INFO - Linha 3 inserida com sucesso!
+2025-02-27 19:22:37,033 - INFO - Linha 4 inserida com sucesso!
+2025-02-27 19:22:37,839 - INFO - Linha 5 inserida com sucesso!
+2025-02-27 19:22:38,725 - INFO - Linha 6 inserida com sucesso!
+2025-02-27 19:22:39,675 - INFO - Linha 7 inserida com sucesso!
+2025-02-27 19:22:40,664 - INFO - Linha 8 inserida com sucesso!
+2025-02-27 19:22:41,331 - INFO - Linha 9 inserida com sucesso!
+2025-02-27 19:22:41,985 - INFO - Linha 10 inserida com sucesso!
+2025-02-27 19:22:41,998 - ERROR - Erro ao inserir dados da linha 11: Message: no such element: Unable to locate element: {"method":"xpath","selector":"//input[@ng-reflect-name="labelFirstName"]"}
+  (Session info: chrome=133.0.6943.127); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+	GetHandleVerifier [0x00D10B43+25139]
+	(No symbol) [0x00CA13F4]
+	(No symbol) [0x00B804E3]
+	(No symbol) [0x00BC83D7]
+	(No symbol) [0x00BC872B]
+	(No symbol) [0x00C11002]
+	(No symbol) [0x00BED014]
+	(No symbol) [0x00C0E778]
+	(No symbol) [0x00BECDC6]
+	(No symbol) [0x00BBBDE9]
+	(No symbol) [0x00BBD124]
+	GetHandleVerifier [0x01014373+3185251]
+	GetHandleVerifier [0x0103291A+3309578]
+	GetHandleVerifier [0x0102CF42+3286578]
+	GetHandleVerifier [0x00DA7AE0+643536]
+	(No symbol) [0x00CAA20D]
+	(No symbol) [0x00CA70B8]
+	(No symbol) [0x00CA7257]
+	(No symbol) [0x00C99E00]
+	BaseThreadInitThunk [0x766DFCC9+25]
+	RtlGetAppContainerNamedObjectPath [0x775E82AE+286]
+	RtlGetAppContainerNamedObjectPath [0x775E827E+238]
+
+2025-02-27 19:22:41,998 - INFO - Capturando tempo de execução
+2025-02-27 19:22:42,039 - INFO - Tempo de execução capturado: Your success rate is 0% ( 0 out of 70 fields) in 8352 milliseconds
+2025-02-27 19:22:42,039 - INFO - Tempo de execução: Your success rate is 0% ( 0 out of 70 fields) in 8352 milliseconds
+2025-02-27 19:22:42,039 - INFO - Tirando screenshot da página e salvando em C:\RPA\RPA_Valor_de_Cotacao\ProjetoFinalCompass\img
+2025-02-27 19:22:42,253 - INFO - Screenshot salvo com sucesso em C:\RPA\RPA_Valor_de_Cotacao\ProjetoFinalCompass\img
+2025-02-27 19:22:42,253 - INFO - Execução finalizada com sucesso!
+2025-02-27 19:22:42,253 - INFO - Fechando navegador Chrome
+2025-02-27 19:22:44,563 - INFO - Navegador Chrome fechado com sucesso!
