@@ -67,7 +67,7 @@ for email in emails:
     print(f"Enviando e-mail para: {email}")
 
     # Modifica a porta de comunicação, adiciona uma etapa de segurança a conexão
-    with smtplib.SMTP_SSL('smtp.gmail.com', 587) as smtp:
+    with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
         smtp.set_debuglevel(1)
         smtp.starttls()
         smtp.local_hostname = "localhost"
