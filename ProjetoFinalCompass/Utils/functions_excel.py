@@ -144,12 +144,13 @@ def split_columns_box(df_to_split):
         raise    
 
 
-def clean_df_if_null(df_to_clean):
+def clean_df_if_null(df_to_clean, na_not_allowed_columns ,logger):
     """
     Remove linhas com células vazias de um DataFrame e registra os CNPJs e as colunas com células vazias.
     
     Args:
         df_to_clean (pd.DataFrame): DataFrame a ser limpo.
+        na_not_allowed_columns (list): Lista com as colunas que não podem estar em branco
     
     Returns:
         pd.DataFrame: DataFrame limpo.
@@ -164,7 +165,8 @@ def clean_df_if_null(df_to_clean):
         empty_cells = []
 
         # Verifica se há células em branco em cada linha
-        for _, row in df_to_clean.iterows():
+        rows_to_drop = []        
+        for _, row in df_to_clean.iterrows():
             empty_rows = row[row.isnull()].index.tolist()
             # Registra as linhas vazias na lista como um dicionário
             if empty_rows:
@@ -172,6 +174,14 @@ def clean_df_if_null(df_to_clean):
                     "CNPJ": row["CNPJ"],
                     "NA": empty_rows
                     })
+            # Verifica se há colunas com células vazias que estão na lista de colunas onde valores nulos não são permitidos
+                if any(
+                    column in na_not_allowed_columns
+                    # Para cada coluna com célula vazia na linha atual, 
+                    # verifica se a coluna está na lista de colunas que não permitem valores nulos
+                    for column in empty_rows
+                    ):
+                    rows_to_drop.append(row.name)
 
         # Registra os CNPJs com células vazias
         if empty_cells:
@@ -186,7 +196,7 @@ def clean_df_if_null(df_to_clean):
         return df_clean, empty_cells
 
     except Exception as erro:
-        logger.error(f"Ocorreu um erro: {erro}")
+        logger.error('Execução clean_df_if_null')
         logger.debug(f"Detalhes do erro:\n{traceback.format_exc()}")
         # Para o processo para depuração manual
         raise
