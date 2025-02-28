@@ -35,7 +35,7 @@ def open_excel_file_to_dataframe(input_file_path,logger):
         logger.debug(f"O arquivo foi encontrado na pasta indicada: {input_file_path}")
         
         # Abre o arquivo excel em DataFrame, na pasta 'Groupo 1' e preenche valores vazios como 'NA'
-        df_input = pd.read_excel(input_file_path, "Grupo 1 ", na_values=["NA"])
+        df_input = pd.read_excel(input_file_path, "Grupo 1 ", na_values=["NA"],dtype=object)
         logger.info("DataFrame com base no arquivo Excel criado com sucesso")
 
         return df_input
@@ -69,7 +69,7 @@ def create_output_dataframe(df_input,logger):
             "PRAZO DE ENTREGA CORREIOS", "STATUS"
         ]
         # Criando o DataFrame com as colunas definidas
-        df_output = pd.DataFrame(columns=columns)
+        df_output = pd.DataFrame(columns=columns,dtype=str)
         logger.info("DataFrame para receber as saídas criado com sucesso.")
 
         # Alimenta o DataFrame de saída com a informações já existentes
@@ -144,12 +144,13 @@ def split_columns_box(df_to_split,logger):
         raise    
 
 
-def clean_df_if_null(df_to_clean,logger):
+def clean_df_if_null(df_to_clean,na_not_allowed_columns ,logger):
     """
     Remove linhas com células vazias de um DataFrame e registra os CNPJs e as colunas com células vazias.
     
     Args:
         df_to_clean (pd.DataFrame): DataFrame a ser limpo.
+        na_not_allowed_columns (list): Lista com as colunas que não podem estar em branco
     
     Returns:
         pd.DataFrame: DataFrame limpo.
@@ -164,6 +165,7 @@ def clean_df_if_null(df_to_clean,logger):
         empty_cells = []
 
         # Verifica se há células em branco em cada linha
+        rows_to_drop = []        
         for _, row in df_to_clean.iterrows():
             empty_rows = row[row.isnull()].index.tolist()
             # Registra as linhas vazias na lista como um dicionário
@@ -172,6 +174,14 @@ def clean_df_if_null(df_to_clean,logger):
                     "CNPJ": row["CNPJ"],
                     "NA": empty_rows
                     })
+            # Verifica se há colunas com células vazias que estão na lista de colunas onde valores nulos não são permitidos
+                if any(
+                    column in na_not_allowed_columns
+                    # Para cada coluna com célula vazia na linha atual, 
+                    # verifica se a coluna está na lista de colunas que não permitem valores nulos
+                    for column in empty_rows
+                    ):
+                    rows_to_drop.append(row.name)
 
         # Registra os CNPJs com células vazias
         if empty_cells:
@@ -276,3 +286,17 @@ def compare_quotation(df_output, output_file_path,logger):
         logging.error('Execução compare_quotations')
         # Para o processo para depuração manual
         raise    
+
+def make_endereco(df:pd.DataFrame):
+    endereco_cols = ["LOGRADOURO", "NÚMERO", "MUNICÍPIO"]
+    if all(col in df.columns for col in endereco_cols):
+        df["ENDEREÇO"] = df[endereco_cols].agg(lambda x: ', '.join(x.dropna().astype(str)), axis=1)
+        df.drop(columns=endereco_cols, inplace=True)
+    return df
+
+def merge_dataframes(df1: pd.DataFrame,df2:pd.DataFrame):
+    diff = df2.columns.difference(df1.columns)
+    for col in diff:
+        df1[col] = r'N\A'
+    df1.update(df2)
+    return df1

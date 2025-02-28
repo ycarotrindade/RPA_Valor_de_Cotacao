@@ -1,8 +1,9 @@
 import re
 from botcity.web import WebBot, By, element_as_select
+from config import vars_map
 
 # como guardar CONSTANTE? (.env? config.py? outra solução?)
-URL_CORREIOS = "https://www2.correios.com.br/sistemas/precosPrazos/"
+URL_CORREIOS = vars_map['DEFAULT_CORREIOS_URL']
 
 
 def interact_correios(
@@ -11,7 +12,7 @@ def interact_correios(
     cep_destiny: str,
     weight: str,
     dimensions: dict,
-    cep_origin: str = "38182428",
+    cep_origin: str = vars_map['ORIGIN_CEP'],
     shipping_date: str = None,
     package_format: str = "caixa",
     package_type: str = "Outra Embalagem",
