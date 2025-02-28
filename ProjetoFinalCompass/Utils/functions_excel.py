@@ -7,10 +7,17 @@ import pandas as pd
 from openpyxl.styles import PatternFill
 from openpyxl import load_workbook
 
+<<<<<<< HEAD
 from Utils.IntegratedLogger import *
 
 
 def open_excel_file_to_dataframe(input_file_path):
+=======
+from Utils import *
+
+
+def open_excel_file_to_dataframe(input_file_path,logger):
+>>>>>>> origin/main
     """ 
     Abre o arquivo excel em um DataFrame, faz modificações necessárias para o projeto e retona o DataFrame 
     
@@ -29,25 +36,42 @@ def open_excel_file_to_dataframe(input_file_path):
 
         # Verifica se o arquivo existe
         if not os.path.exists(input_file_path):
+<<<<<<< HEAD
             logger.error("O arquivo não foi encontrado.")
             raise  FileNotFoundError(f"O arquivo {input_file_path} não foi encontrado.") 
+=======
+            logger.debug(" arquivo não foi encontrado.")
+            raise FileNotFoundError(f"O arquivo {input_file_path} não foi encontrado.") 
+>>>>>>> origin/main
         logger.info(f"O arquivo de Excel com os dados de entrada foi encontrado.")
         logger.debug(f"O arquivo foi encontrado na pasta indicada: {input_file_path}")
         
         # Abre o arquivo excel em DataFrame, na pasta 'Groupo 1' e preenche valores vazios como 'NA'
+<<<<<<< HEAD
         df_input = pd.read_excel(input_file_path, "Grupo 1 ", na_values=["NA"])
+=======
+        df_input = pd.read_excel(input_file_path, "Grupo 1 ", na_values=["NA"],dtype=object)
+>>>>>>> origin/main
         logger.info("DataFrame com base no arquivo Excel criado com sucesso")
 
         return df_input
     
     except Exception as erro:
+<<<<<<< HEAD
         logger.error(f"Ocorreu um erro: {erro}")
         logger.debug(f"Detalhes do erro:\n{traceback.format_exc()}")
+=======
+        logger.error('Execução open_excel_file_to_dataframe')
+>>>>>>> origin/main
         # Para o processo para depuração manual
         raise
 
 
+<<<<<<< HEAD
 def create_output_dataframe():
+=======
+def create_output_dataframe(df_input,logger):
+>>>>>>> origin/main
     """
     Cria um DataFrame vazio com colunas predefinidas.
     
@@ -65,27 +89,51 @@ def create_output_dataframe():
             "CNPJ", "RAZÃO SOCIAL", "NOME FANTASIA",
             "ENDEREÇO", "CEP", "DESCRIÇÃO MATRIZ FILIAL",
             "TELEFONE + DDD", "E-MAIL", "VALOR DO PEDIDO",
+<<<<<<< HEAD
             "DIMENSÕES CAIXA", "PESO DO PRODUTO", "TIPO DE SERVIÇO JADLOG",
+=======
+            "DIMENSÕES CAIXA (altura x largura x comprimento cm)", "PESO DO PRODUTO", "TIPO DE SERVIÇO JADLOG",
+>>>>>>> origin/main
             "TIPO DE SERVIÇO CORREIOS", "VALOR COTAÇÃO JADLOG", "VALOR COTAÇÃO CORREIOS",
             "PRAZO DE ENTREGA CORREIOS", "STATUS"
         ]
         # Criando o DataFrame com as colunas definidas
+<<<<<<< HEAD
         df_output = pd.DataFrame(columns=columns)
         logger.info("DataFrame para receber as saídas criado com sucesso.")
 
         # Alimenta o DataFrame de saída com as informações já existentes
         df_output.set_index("CNPJ").join(df_input.set_index("CNPJ"))
+=======
+        df_output = pd.DataFrame(columns=columns,dtype=str)
+        logger.info("DataFrame para receber as saídas criado com sucesso.")
+
+        # Alimenta o DataFrame de saída com a informações já existentes
+        df_output['CNPJ'] = df_input['CNPJ']
+        df_output = df_output.set_index('CNPJ')
+        df_input = df_input.set_index('CNPJ')
+        df_output.update(df_input)
+        df_output = df_output.reset_index()
+>>>>>>> origin/main
         
         return df_output
     
     except Exception as erro:
+<<<<<<< HEAD
         logger.error(f"Ocorreu um erro: {erro}")
         logger.debug(f"Detalhes do erro:\n{traceback.format_exc()}")
+=======
+        logger.error("Execução de create_output_dataframe")
+>>>>>>> origin/main
         # Para o processo para depuração manual
         raise
 
 
+<<<<<<< HEAD
 def save_df_output_to_excel(output_path, df_output):
+=======
+def save_df_output_to_excel(output_path, df_output,logger):
+>>>>>>> origin/main
     """
     Salva o DataFrame em um arquivo Excel no caminho especificado.
     
@@ -117,13 +165,21 @@ def save_df_output_to_excel(output_path, df_output):
         return output_file_path
 
     except Exception as erro:
+<<<<<<< HEAD
         logger.error(f"Ocorreu um erro: {erro}")
         logger.debug(f"Detalhes do erro:\n{traceback.format_exc()}")
+=======
+        logger.error('Execução save_df_output_excel')
+>>>>>>> origin/main
         # Para o processo para depuração manual
         raise
 
 
+<<<<<<< HEAD
 def split_columns_box(df_to_split):
+=======
+def split_columns_box(df_to_split,logger):
+>>>>>>> origin/main
     try:
         logger.info("Iniciando as modificações necessarias do DataFrame")
         # Adiciona colunas para as dimensões dos produtos
@@ -138,13 +194,21 @@ def split_columns_box(df_to_split):
         return df_input_split
 
     except Exception as erro:
+<<<<<<< HEAD
         logger.error(f"Ocorreu um erro: {erro}")
         logger.debug(f"Detalhes do erro:\n{traceback.format_exc()}")
+=======
+        logger.error('Execução split_columnms_box')
+>>>>>>> origin/main
         # Para o processo para depuração manual
         raise    
 
 
+<<<<<<< HEAD
 def clean_df_if_null(df_to_clean, na_not_allowed_columns ,logger):
+=======
+def clean_df_if_null(df_to_clean,na_not_allowed_columns ,logger):
+>>>>>>> origin/main
     """
     Remove linhas com células vazias de um DataFrame e registra os CNPJs e as colunas com células vazias.
     
@@ -197,12 +261,19 @@ def clean_df_if_null(df_to_clean, na_not_allowed_columns ,logger):
 
     except Exception as erro:
         logger.error('Execução clean_df_if_null')
+<<<<<<< HEAD
         logger.debug(f"Detalhes do erro:\n{traceback.format_exc()}")
+=======
+>>>>>>> origin/main
         # Para o processo para depuração manual
         raise
 
 
+<<<<<<< HEAD
 def write_if_null_output(df_output, empty_cells):
+=======
+def write_if_null_output(df_output, empty_cells:list,logger):
+>>>>>>> origin/main
     """
     Atualiza a coluna 'Status' no DataFrame de saída com informações sobre células vazias.
 
@@ -219,25 +290,42 @@ def write_if_null_output(df_output, empty_cells):
         # Itera sobre a lista de células vazias para preencher a coluna 'Status'
         for empty in empty_cells:
             # Verifica se, na linha, o índice CNPJ é igual
+<<<<<<< HEAD
             index = df_output[df_output["CNPJ"] == empty["CNPJ"]].index
 
             # Verifica se a linha com o CNPJ existe no df_output e preenche
             if not index.empty:
                 # Atualiza a coluna 'Status' na linha correspondente
                 df_output.at[index, "Status"] = f"Os campos {empty['NA']} estão vazios"
+=======
+            value = empty['CNPJ']
+            index = df_output[df_output["CNPJ"] == value].index
+            # Verifica se a linha com o CNPJ existe no df_output e preenche
+            if not index.empty:
+                # Atualiza a coluna 'Status' na linha correspondente
+                df_output.at[index, "STATUS"] = f"Os campos {empty['NA']} estão vazios"
+>>>>>>> origin/main
                 logger.info(f"Coluna 'Status' atualizada para o CNPJ {empty['CNPJ']}: {empty['NA']}")
 
         return df_output
 
 
     except Exception as erro:
+<<<<<<< HEAD
         logging.error(f"Ocorreu um erro: {erro}")
         logging.debug(f"Detalhes do erro:\n{traceback.format_exc()}")
+=======
+        logging.error('Execução write_if_null_output')
+>>>>>>> origin/main
         # Para o processo para depuração manual
         raise    
 
 
+<<<<<<< HEAD
 def compare_quotation(df_output, output_file_path):
+=======
+def compare_quotation(df_output, output_file_path,logger):
+>>>>>>> origin/main
     """
     Compara os valores de cotação e destaca o menor valor em um arquivo Excel.
 
@@ -284,6 +372,7 @@ def compare_quotation(df_output, output_file_path):
         workbook.save(output_file_path)
         logging.info(f"Arquivo Excel atualizado e salvo em: {output_file_path}")
 
+<<<<<<< HEAD
     except ValueError as erro:
         logging.error(f"Erro de valor: {erro}")
     except FileNotFoundError as erro:
@@ -293,3 +382,23 @@ def compare_quotation(df_output, output_file_path):
         logging.debug(f"Detalhes do erro:\n{traceback.format_exc()}")
         # Para o processo para depuração manual
         raise    
+=======
+    except Exception as erro:
+        logging.error('Execução compare_quotations')
+        # Para o processo para depuração manual
+        raise    
+
+def make_endereco(df:pd.DataFrame):
+    endereco_cols = ["LOGRADOURO", "NÚMERO", "MUNICÍPIO"]
+    if all(col in df.columns for col in endereco_cols):
+        df["ENDEREÇO"] = df[endereco_cols].agg(lambda x: ', '.join(x.dropna().astype(str)), axis=1)
+        df.drop(columns=endereco_cols, inplace=True)
+    return df
+
+def merge_dataframes(df1: pd.DataFrame,df2:pd.DataFrame):
+    diff = df2.columns.difference(df1.columns)
+    for col in diff:
+        df1[col] = r'N\A'
+    df1.update(df2)
+    return df1
+>>>>>>> origin/main

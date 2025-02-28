@@ -3,6 +3,9 @@ import logging
 import os
 from datetime import datetime
 from botcity.web import WebBot
+import traceback
+import sys
+from PIL import ImageGrab
 
 class IntegratedLogger:
     '''Classe que integra logs locais e logs do botcity.
@@ -53,7 +56,10 @@ class IntegratedLogger:
         '''Configurações de loggers, não deve ser chamada fora da classe'''
         
         self.filepath = os.path.join(self.filepath,datetime.now().strftime('%d-%m-%Y'))
+        self.image_filepath = os.path.join(self.filepath,'Images')
+        self.filepath = os.path.join(self.filepath,'Files')
         os.makedirs(self.filepath,exist_ok=True)
+        os.makedirs(self.image_filepath,exist_ok=True)
         
         self.dev_logger.setLevel(logging.DEBUG)
         dev_logger_stream_handler = logging.StreamHandler()
@@ -116,8 +122,8 @@ class IntegratedLogger:
                 }
             )
 
-    def warning(self,msg:str,process_name:str,bot:WebBot):
-        '''Insere uma mensagem de level WARNING no log e captura a tela.
+    def warning(self,process_name:str):
+        '''Insere uma mensagem de level WARNING no log e captura a tela, a mensagen é capturada automaticamente.
         
         # Parâmetros
         
@@ -131,29 +137,31 @@ class IntegratedLogger:
                 Objeto WebBot do botcity, usado para realizar a captura de tela.
         
         '''
-        msg_list = msg.splitlines()
+        msg_list = traceback.format_exc().splitlines()
+        etype, value, _ = sys.exc_info()
+        msg_reduced = traceback.format_exception_only(etype,value)
         list(map(lambda message:self.dev_logger.warning(message),msg_list))
-        self.client_logger.warning(msg_list[-1])
+        self.client_logger.warning(msg_reduced)
         image_filepath = os.path.join(self.image_filepath,f'{datetime.now().strftime(self.datetime_file_format)}_RPA_{process_name}.jpg')
-        bot.screenshot(filepath=image_filepath)
+        ImageGrab.grab().save(image_filepath)
         if self.maestro is not None:
             self.maestro.new_log_entry(
                 activity_label=self.activity_label,
                 values={
                     'Datetime':datetime.now().strftime(self.datetime_format),
                     'Level':'WARNING',
-                    'Message':msg_list[-1]
+                    'Message':msg_reduced
                 }
             )
             self.maestro.error(
                 task_id=self.maestro.get_execution().task_id,
-                exception=Exception(msg_list[-1]),
+                exception=Exception(msg_reduced),
                 screenshot=image_filepath
             )
         
 
-    def error(self,msg:str,process_name:str,bot:WebBot):
-        '''Insere uma mensagem de level ERROR no log e captura a tela.
+    def error(self,process_name:str):
+        '''Insere uma mensagem de level ERROR no log e captura a tela, a mensagem é capturada automaticamente.
         
         # Parâmetros
         
@@ -167,22 +175,24 @@ class IntegratedLogger:
                 Objeto WebBot do botcity, usado para realizar a captura de tela.
         
         '''
-        msg_list = msg.splitlines()
+        msg_list = traceback.format_exc().splitlines()
+        etype, value, _ = sys.exc_info()
+        msg_reduced = traceback.format_exception_only(etype,value)
         list(map(lambda message:self.dev_logger.error(message),msg_list))
-        self.client_logger.error(msg_list[-1])
+        self.client_logger.error(msg_reduced)
         image_filepath = os.path.join(self.image_filepath,f'{datetime.now().strftime(self.datetime_file_format)}_RPA_{process_name}.jpg')
-        bot.screenshot(filepath=image_filepath)
+        ImageGrab.grab().save(image_filepath)
         if self.maestro is not None:
             self.maestro.new_log_entry(
                 activity_label=self.activity_label,
                 values={
                     'Datetime':datetime.now().strftime(self.datetime_format),
                     'Level':'INFO',
-                    'Message':msg_list[-1]
+                    'Message':msg_reduced
                 }
             )
             self.maestro.error(
                 task_id=self.maestro.get_execution().task_id,
-                exception=Exception(msg_list[-1]),
+                exception=Exception(msg_reduced),
                 screenshot=image_filepath
             )
