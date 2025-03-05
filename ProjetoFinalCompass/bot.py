@@ -50,10 +50,10 @@ def main():
         df_output = create_output_dataframe(df,logger)
         api_data, df_output = api_data_lookup(df_output,logger)
         api_data = make_endereco(api_data)
-        df_updated = merge_dataframes(df,api_data)
-        
-        rpa_challenge(logger,df_updated)
-        df_filtered, df_output = interaction_df_correios(df_filtered=df_updated,df_output=df_output,bot=bot,logger=logger)
+        df_output, df_correios, df_jadlog = make_jadlog_correios_dataframes(df_output,api_data,logger)
+        rpa_challenge(logger,api_data)
+        df_filtered, df_output = interaction_df_correios(df_filtered=df_correios,df_output=df_output,bot=bot,logger=logger)
+        df_output = catchJadlogPrice(bot=bot,maestro=maestro,df_filtered=df_jadlog,df_output=df_output,logger=logger)
         save_df_output_to_excel(DEFAULT_PROCESSADOS_PATH,df_output,logger)
     except:
         logger.error('Execução RPA_Valor_Cotação')

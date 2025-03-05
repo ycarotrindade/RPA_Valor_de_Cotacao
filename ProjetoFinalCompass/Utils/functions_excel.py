@@ -294,9 +294,17 @@ def make_endereco(df:pd.DataFrame):
         df.drop(columns=endereco_cols, inplace=True)
     return df
 
-def merge_dataframes(df1: pd.DataFrame,df2:pd.DataFrame):
-    diff = df2.columns.difference(df1.columns)
-    for col in diff:
-        df1[col] = r'N\A'
-    df1.update(df2)
-    return df1
+def make_jadlog_correios_dataframes(df_output:pd.DataFrame,api_data:pd.DataFrame,logger:IntegratedLogger):
+    correios_columns = ['CNPJ','DIMENSÕES CAIXA (altura x largura x comprimento cm)','PESO DO PRODUTO','TIPO DE SERVIÇO CORREIOS','CEP']
+    jadlog_columns = ['CNPJ','TIPO DE SERVIÇO JADLOG','DIMENSÕES CAIXA (altura x largura x comprimento cm)','PESO DO PRODUTO','CEP','VALOR DO PEDIDO']
+    df_output = df_output.set_index('CNPJ')
+    api_data = api_data.set_index('CNPJ')
+    df_output.update(api_data)
+    df_output = df_output.reset_index()
+    df_correios, empty_cells = clean_df_if_null(df_output[correios_columns],correios_columns,logger)
+    df_output = write_if_null_output(df_output,empty_cells,logger)
+    df_jadlog, empty_cells = clean_df_if_null(df_output[jadlog_columns],jadlog_columns,logger)
+    df_jadlog = df_jadlog.astype(str)
+    df_jadlog['VALOR DO PEDIDO'] = df_jadlog['VALOR DO PEDIDO'].apply(lambda x:x.replace('.',','))
+    df_output = write_if_null_output(df_output,empty_cells,logger)
+    return df_output, df_correios, df_jadlog
