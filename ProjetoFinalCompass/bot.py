@@ -54,7 +54,10 @@ def main():
         rpa_challenge(logger,api_data)
         df_filtered, df_output = interaction_df_correios(df_filtered=df_correios,df_output=df_output,bot=bot,logger=logger)
         df_output = catchJadlogPrice(bot=bot,maestro=maestro,df_filtered=df_jadlog,df_output=df_output,logger=logger)
-        save_df_output_to_excel(DEFAULT_PROCESSADOS_PATH,df_output,logger)
+        output_file = save_df_output_to_excel(DEFAULT_PROCESSADOS_PATH,df_output,logger)
+        compare_quotation(df_output,output_file,logger)
+        send_emails(output_file,logger)
+        
     except:
         logger.error('Execução RPA_Valor_Cotação')
     

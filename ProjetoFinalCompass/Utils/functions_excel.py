@@ -1,13 +1,10 @@
 import os
-import logging
-import traceback
 import time
-
 import pandas as pd
 from openpyxl.styles import PatternFill
 from openpyxl import load_workbook
 
-from Utils import *
+from Utils.IntegratedLogger import IntegratedLogger
 
 
 def open_excel_file_to_dataframe(input_file_path,logger):
@@ -230,12 +227,12 @@ def write_if_null_output(df_output, empty_cells:list,logger):
 
 
     except Exception as erro:
-        logging.error('Execução write_if_null_output')
+        logger.error('Execução write_if_null_output')
         # Para o processo para depuração manual
         raise    
 
 
-def compare_quotation(df_output, output_file_path,logger):
+def compare_quotation(df_output:pd.DataFrame, output_file_path,logger):
     """
     Compara os valores de cotação e destaca o menor valor em um arquivo Excel.
 
@@ -246,8 +243,14 @@ def compare_quotation(df_output, output_file_path,logger):
     try:
         logger.info("Inciando o processo de comparação das cotações - Correios x JadLog")
         
-        # Comparar os valores e criar uma nova coluna indicando o menor valor
-        df_output['Menor_Valor'] = df_output[["VALOR COTAÇÃO CORREIOS", "VALOR COTAÇÃO JADLOG"]].idxmin(axis=1)
+        #Comparar os valores e criar uma nova coluna indicando o menor valor
+        df_modified = df_output.copy()
+        for col in ["VALOR COTAÇÃO CORREIOS", "VALOR COTAÇÃO JADLOG"]:
+            df_modified[col] = df_modified[col].astype(str)
+            df_modified[col] = df_modified[col].apply(lambda x:x.replace('R$',''))
+            df_modified[col] = df_modified[col].apply(lambda x:x.replace(',','.'))
+            df_modified[col] = df_modified[col].astype(float)
+        df_output['Menor_Valor'] = df_modified[["VALOR COTAÇÃO CORREIOS", "VALOR COTAÇÃO JADLOG"]].idxmin(axis=1)
         logger.info("Comparação de valores concluída. Coluna 'Menor_Valor' criada.")
         
         # Carregar o arquivo Excel usando openpyxl
@@ -270,9 +273,10 @@ def compare_quotation(df_output, output_file_path,logger):
         
             # Obter a célula correspondente
             cell = worksheet.cell(row=index+2, column=column_index)
+            if cell.value is not None:
             # Preenche a célula com a cor escolhida
-            cell.fill = green_fill
-            logger.debug(f"Célula na linha {index+2} preenchida de verde.")
+                cell.fill = green_fill
+                logger.debug(f"Célula na linha {index+2} preenchida de verde.")
 
         # Remover a coluna temporária
         df_output.drop('Menor_Valor', axis=1, inplace=True)
@@ -280,10 +284,10 @@ def compare_quotation(df_output, output_file_path,logger):
         
         # Salvar o arquivo Excel atualizado
         workbook.save(output_file_path)
-        logging.info(f"Arquivo Excel atualizado e salvo em: {output_file_path}")
+        logger.info(f"Arquivo Excel atualizado e salvo em: {output_file_path}")
 
     except Exception as erro:
-        logging.error('Execução compare_quotations')
+        logger.error('Execução compare_quotations')
         # Para o processo para depuração manual
         raise    
 
