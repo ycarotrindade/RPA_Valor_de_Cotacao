@@ -1,7 +1,9 @@
-
 import os
 from botcity.web import WebBot, Browser, By
 from botcity.maestro import *
+from dotenv import load_dotenv
+
+load_dotenv(override=True)
 
 IS_MAESTRO_CONNECTED = eval(os.getenv('IS_MAESTRO_CONNECTED'))
 if IS_MAESTRO_CONNECTED:
@@ -13,6 +15,11 @@ if IS_MAESTRO_CONNECTED:
     DEFAULT_CORREIOS_URL = execution.parameters.get('DEFAULT_CORREIOS_URL')
     DEFAULT_BRASILAPI_URL = execution.parameters.get('DEFAULT_BRASILAPI_URL')
     ORIGIN_CEP = execution.parameters.get('ORIGIN_CEP')
+    DEFAULT_URL_JADLOG = execution.parameters.get('DEFAULT_URL_JADLOG')
+    PICKUP_VALUE = execution.parameters.get('PICKUP_VALUE')
+    DEFAULT_EMAILS_FILE = execution.parameters.get('DEFAULT_EMAILS_FILE')
+    EMAIL_PASSWORD = execution.parameters.get('EMAIL_PASSWORD')
+    EMAIL_USERNAME = execution.parameters.get('EMAIL_USERNAME')
 else:
     maestro = None
     execution = None
@@ -22,7 +29,11 @@ else:
     DEFAULT_CORREIOS_URL = os.getenv('DEFAULT_CORREIOS_URL')
     DEFAULT_BRASILAPI_URL = os.getenv('DEFAULT_BRASILAPI_URL')
     ORIGIN_CEP = os.getenv('ORIGIN_CEP')
-
+    DEFAULT_URL_JADLOG = os.getenv('DEFAULT_URL_JADLOG')
+    PICKUP_VALUE = os.getenv('PICKUP_VALUE')
+    DEFAULT_EMAILS_FILE = os.getenv('DEFAULT_EMAILS_FILE')
+    EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
+    EMAIL_USERNAME = os.getenv('EMAIL_USERNAME')
 
 vars_map = {
     'IS_MAESTRO_CONNECTED':IS_MAESTRO_CONNECTED,
@@ -33,6 +44,11 @@ vars_map = {
     'DEFAULT_CORREIOS_URL':DEFAULT_CORREIOS_URL,
     'DEFAULT_BRASILAPI_URL':DEFAULT_BRASILAPI_URL,
     'DEFAULT_MAESTRO':maestro,
+    'DEFAULT_EMAILS_FILE':DEFAULT_EMAILS_FILE,
     'DEFAULT_EXECUTION':execution,
-    'ORIGIN_CEP':ORIGIN_CEP
+    'ORIGIN_CEP':ORIGIN_CEP,
+    'PICKUP_VALUE':PICKUP_VALUE,
+    'DEFAULT_URL_JADLOG':DEFAULT_URL_JADLOG,
+    'EMAIL_PASSWORD':EMAIL_PASSWORD,
+    'EMAIL_USERNAME':EMAIL_USERNAME
 }

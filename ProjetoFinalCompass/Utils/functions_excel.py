@@ -1,12 +1,10 @@
 import os
-import logging
-import traceback
 import time
-
 import pandas as pd
 from openpyxl.styles import PatternFill
 from openpyxl import load_workbook
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 from Utils.IntegratedLogger import *
 
@@ -14,6 +12,9 @@ from Utils.IntegratedLogger import *
 def open_excel_file_to_dataframe(input_file_path):
 =======
 from Utils import *
+=======
+from Utils.IntegratedLogger import IntegratedLogger
+>>>>>>> origin/main
 
 
 def open_excel_file_to_dataframe(input_file_path,logger):
@@ -312,19 +313,27 @@ def write_if_null_output(df_output, empty_cells:list,logger):
 
     except Exception as erro:
 <<<<<<< HEAD
+<<<<<<< HEAD
         logging.error(f"Ocorreu um erro: {erro}")
         logging.debug(f"Detalhes do erro:\n{traceback.format_exc()}")
 =======
         logging.error('Execução write_if_null_output')
+>>>>>>> origin/main
+=======
+        logger.error('Execução write_if_null_output')
 >>>>>>> origin/main
         # Para o processo para depuração manual
         raise    
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 def compare_quotation(df_output, output_file_path):
 =======
 def compare_quotation(df_output, output_file_path,logger):
+>>>>>>> origin/main
+=======
+def compare_quotation(df_output:pd.DataFrame, output_file_path,logger):
 >>>>>>> origin/main
     """
     Compara os valores de cotação e destaca o menor valor em um arquivo Excel.
@@ -336,8 +345,14 @@ def compare_quotation(df_output, output_file_path,logger):
     try:
         logger.info("Inciando o processo de comparação das cotações - Correios x JadLog")
         
-        # Comparar os valores e criar uma nova coluna indicando o menor valor
-        df_output['Menor_Valor'] = df_output[["VALOR COTAÇÃO CORREIOS", "VALOR COTAÇÃO JADLOG"]].idxmin(axis=1)
+        #Comparar os valores e criar uma nova coluna indicando o menor valor
+        df_modified = df_output.copy()
+        for col in ["VALOR COTAÇÃO CORREIOS", "VALOR COTAÇÃO JADLOG"]:
+            df_modified[col] = df_modified[col].astype(str)
+            df_modified[col] = df_modified[col].apply(lambda x:x.replace('R$',''))
+            df_modified[col] = df_modified[col].apply(lambda x:x.replace(',','.'))
+            df_modified[col] = df_modified[col].astype(float)
+        df_output['Menor_Valor'] = df_modified[["VALOR COTAÇÃO CORREIOS", "VALOR COTAÇÃO JADLOG"]].idxmin(axis=1)
         logger.info("Comparação de valores concluída. Coluna 'Menor_Valor' criada.")
         
         # Carregar o arquivo Excel usando openpyxl
@@ -360,9 +375,10 @@ def compare_quotation(df_output, output_file_path,logger):
         
             # Obter a célula correspondente
             cell = worksheet.cell(row=index+2, column=column_index)
+            if cell.value is not None:
             # Preenche a célula com a cor escolhida
-            cell.fill = green_fill
-            logger.debug(f"Célula na linha {index+2} preenchida de verde.")
+                cell.fill = green_fill
+                logger.debug(f"Célula na linha {index+2} preenchida de verde.")
 
         # Remover a coluna temporária
         df_output.drop('Menor_Valor', axis=1, inplace=True)
@@ -370,7 +386,7 @@ def compare_quotation(df_output, output_file_path,logger):
         
         # Salvar o arquivo Excel atualizado
         workbook.save(output_file_path)
-        logging.info(f"Arquivo Excel atualizado e salvo em: {output_file_path}")
+        logger.info(f"Arquivo Excel atualizado e salvo em: {output_file_path}")
 
 <<<<<<< HEAD
     except ValueError as erro:
@@ -384,7 +400,7 @@ def compare_quotation(df_output, output_file_path,logger):
         raise    
 =======
     except Exception as erro:
-        logging.error('Execução compare_quotations')
+        logger.error('Execução compare_quotations')
         # Para o processo para depuração manual
         raise    
 
@@ -395,10 +411,27 @@ def make_endereco(df:pd.DataFrame):
         df.drop(columns=endereco_cols, inplace=True)
     return df
 
+<<<<<<< HEAD
 def merge_dataframes(df1: pd.DataFrame,df2:pd.DataFrame):
     diff = df2.columns.difference(df1.columns)
     for col in diff:
         df1[col] = r'N\A'
     df1.update(df2)
     return df1
+>>>>>>> origin/main
+=======
+def make_jadlog_correios_dataframes(df_output:pd.DataFrame,api_data:pd.DataFrame,logger:IntegratedLogger):
+    correios_columns = ['CNPJ','DIMENSÕES CAIXA (altura x largura x comprimento cm)','PESO DO PRODUTO','TIPO DE SERVIÇO CORREIOS','CEP']
+    jadlog_columns = ['CNPJ','TIPO DE SERVIÇO JADLOG','DIMENSÕES CAIXA (altura x largura x comprimento cm)','PESO DO PRODUTO','CEP','VALOR DO PEDIDO']
+    df_output = df_output.set_index('CNPJ')
+    api_data = api_data.set_index('CNPJ')
+    df_output.update(api_data)
+    df_output = df_output.reset_index()
+    df_correios, empty_cells = clean_df_if_null(df_output[correios_columns],correios_columns,logger)
+    df_output = write_if_null_output(df_output,empty_cells,logger)
+    df_jadlog, empty_cells = clean_df_if_null(df_output[jadlog_columns],jadlog_columns,logger)
+    df_jadlog = df_jadlog.astype(str)
+    df_jadlog['VALOR DO PEDIDO'] = df_jadlog['VALOR DO PEDIDO'].apply(lambda x:x.replace('.',','))
+    df_output = write_if_null_output(df_output,empty_cells,logger)
+    return df_output, df_correios, df_jadlog
 >>>>>>> origin/main

@@ -3,31 +3,19 @@ import os
 from botcity.web import WebBot, By, element_as_select
 from botcity.maestro import BotMaestroSDK
 import pandas as pd
-import traceback
 from .helper_functions import *
 from .IntegratedLogger import *
+from config import vars_map
+
 
 load_dotenv(override=True)
 
-def catchJadlogPrice(bot:WebBot,maestro:BotMaestroSDK,df:pd.DataFrame,logger:IntegratedLogger):
-    sucess_items = 0
+def catchJadlogPrice(bot:WebBot,maestro:BotMaestroSDK,df_filtered:pd.DataFrame,df_output:pd.DataFrame,logger:IntegratedLogger):
     try:
         # Definição de Constantes
-        if maestro is None:
-            DEFAULT_URL_JADLOG = os.getenv('DEFAULT_URL_JADLOG')
-            BASE_LOG_PATH = os.getenv('BASE_LOG_PATH')
-            ACTIVITY_LABEL = None
-            PICKUP_VALUE = 50
-            ORIGIN_CEP = 38182428
-        else:
-            execution = maestro.get_execution(task_id=maestro.task_id)
-            DEFAULT_URL_JADLOG = execution.parameters.get('DEFAULT_URL_JADLOG')
-            BASE_LOG_PATH = execution.parameters.get('BASE_LOG_PATH')
-            ACTIVITY_LABEL = os.getenv('ACTIVITY_LABEL')
-            PICKUP_VALUE = execution.parameters.get('PICKUP_VALUE')
-            PICKUP_VALUE = 50 if len(str(PICKUP_VALUE)) == 0 else PICKUP_VALUE
-            ORIGIN_CEP = execution.parameters.get('ORIGIN_CEP')
-            ORIGIN_CEP = 38182428 if len(ORIGIN_CEP) == 0 else ORIGIN_CEP
+        DEFAULT_URL_JADLOG = vars_map['DEFAULT_URL_JADLOG']
+        PICKUP_VALUE = vars_map['PICKUP_VALUE']
+        ORIGIN_CEP = vars_map['ORIGIN_CEP']
         
         # Main
         logger.info('-'*10 + " Início - catchJadlogPrice " + '-'*10)
@@ -41,11 +29,11 @@ def catchJadlogPrice(bot:WebBot,maestro:BotMaestroSDK,df:pd.DataFrame,logger:Int
             raise Exception('Página não carregada corretamente')
         
         logger.debug('Reduz o dataframe original para trabalhar somente com as informações necessárias')
-        df_filtered = df[['TIPO DE SERVIÇO JADLOG','DIMENSÕES CAIXA (altura x largura x comprimento cm)','PESO DO PRODUTO','CEP']]
+        df_filtered = df_filtered[['CNPJ','TIPO DE SERVIÇO JADLOG','DIMENSÕES CAIXA (altura x largura x comprimento cm)','PESO DO PRODUTO','CEP','VALOR DO PEDIDO']]
         logger.debug(df_filtered.columns.__repr__())
         
         logger.info('Tenta preencher informações dos campos')
-        for index, serie in df.iterrows():
+        for index, serie in df_filtered.iterrows():
             try:
                 logger.debug('Inserindo tipo de serviço jedlog')
                 jadlog_service_select = element_as_select(bot.find_element('#modalidade'))
@@ -73,10 +61,14 @@ def catchJadlogPrice(bot:WebBot,maestro:BotMaestroSDK,df:pd.DataFrame,logger:Int
                 weight_input.send_keys(serie['PESO DO PRODUTO'])
                 
                 logger.debug('Inserindo CEP de destino')
-                bot.find_element('#destino').send_keys(serie['CEP'])
+                destino_element = bot.find_element('#destino')
+                destino_element.clear()
+                destino_element.send_keys(serie['CEP'])
                 
                 logger.debug('Inserindo CEP de origem')
-                bot.find_element('#origem').send_keys(ORIGIN_CEP)
+                origin_element = bot.find_element('#origem')
+                origin_element.clear()
+                origin_element.send_keys(ORIGIN_CEP)
                 
                 logger.debug(f'Inserindo valor de coleta | {PICKUP_VALUE}')
                 pickup_input = bot.find_element('#valor_coleta')
@@ -94,15 +86,16 @@ def catchJadlogPrice(bot:WebBot,maestro:BotMaestroSDK,df:pd.DataFrame,logger:Int
                 
                 # Delay necessário senão o valor de cotação pego vai ser o anterior
                 bot.wait(1000)
-                quotation = bot.find_element('//span[contains(text(),"R$")]',By.XPATH).get_attribute('innerText').replace('R$ ','').replace('.',',')
                 
-                df.loc[index,'VALOR COTAÇÃO JADLOG'] = quotation
-                sucess_items += 1
+                logger.debug('Inserindo valor de cotação')
+                quotation = bot.find_element('//span[contains(text(),"R$")]',By.XPATH).get_attribute('innerText').replace('R$ ','').replace('.',',')
+                df_output.loc[df_output['CNPJ'] == serie['CNPJ'],'VALOR COTAÇÃO JADLOG'] = f'R$ {quotation}'
             except:
-                logger.error(process_name='Inserindo valores no site JadLog',bot=bot)
-        
+                df_output.loc[df_output['CNPJ'] == serie['CNPJ'],'STATUS'] = f'Falha cotação jadlog'
+                logger.error(process_name='Inserindo valores no site JadLog')
+                continue
         bot.stop_browser()
     except:
         logger.error("Execução de CatchJadlogPrice",bot)
     finally:
-        return df, sucess_items
+        return df_output
