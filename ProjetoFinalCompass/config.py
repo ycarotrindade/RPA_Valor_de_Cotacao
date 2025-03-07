@@ -18,8 +18,8 @@ if IS_MAESTRO_CONNECTED:
     DEFAULT_URL_JADLOG = execution.parameters.get('DEFAULT_URL_JADLOG')
     PICKUP_VALUE = execution.parameters.get('PICKUP_VALUE')
     DEFAULT_EMAILS_FILE = execution.parameters.get('DEFAULT_EMAILS_FILE')
-    EMAIL_PASSWORD = execution.parameters.get('EMAIL_PASSWORD')
-    EMAIL_USERNAME = execution.parameters.get('EMAIL_USERNAME')
+    EMAIL_PASSWORD = maestro.get_credential(label='VALOR_COTACAO_CREDENTIALS',key='EMAIL_PASSWORD')
+    EMAIL_USERNAME = maestro.get_credential(label='VALOR_COTACAO_CREDENTIALS',key='EMAIL_USERNAME')
 else:
     maestro = None
     execution = None

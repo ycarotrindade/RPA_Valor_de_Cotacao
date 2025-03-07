@@ -11,6 +11,30 @@ from config import vars_map
 load_dotenv(override=True)
 
 def catchJadlogPrice(bot:WebBot,maestro:BotMaestroSDK,df_filtered:pd.DataFrame,df_output:pd.DataFrame,logger:IntegratedLogger):
+    '''Acessa o site do jadlog e pega a cotação da entrega
+    
+    # Argumentos
+        bot: `WebBot`
+            Objeto WebBot usado pelo botcity
+        
+        maestro: `BotMaestroSDK`
+            Objeto maestro usado pelo botcity
+        
+        df_filtered: `pd.DataFrame`
+            Dataframe onde contém só as informações necessárias para a realização do processo
+        
+        df_output: `pd.DataFrame`
+            Dataframe de saída que vai ser editado
+        
+        logger: `IntegratedLogger`
+            Logger usado para gerar arquivos de log
+        
+        # Retorno
+            Dataframe de saída editado
+    
+    '''
+    
+    
     try:
         # Definição de Constantes
         DEFAULT_URL_JADLOG = vars_map['DEFAULT_URL_JADLOG']

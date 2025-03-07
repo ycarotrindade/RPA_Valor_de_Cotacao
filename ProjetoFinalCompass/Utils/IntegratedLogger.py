@@ -126,15 +126,10 @@ class IntegratedLogger:
         '''Insere uma mensagem de level WARNING no log e captura a tela, a mensagen é capturada automaticamente.
         
         # Parâmetros
-        
-            * msg: `str`
-                Mensagem a ser inserida no log.
             
             * process_name: `str`
                 Nome do processo que estava sendo executado antes do erro.
             
-            * bot: `WebBot`
-                Objeto WebBot do botcity, usado para realizar a captura de tela.
         
         '''
         msg_list = traceback.format_exc().splitlines()
@@ -164,15 +159,9 @@ class IntegratedLogger:
         '''Insere uma mensagem de level ERROR no log e captura a tela, a mensagem é capturada automaticamente.
         
         # Parâmetros
-        
-            * msg: `str`
-                Mensagem a ser inserida no log.
             
             * process_name: `str`
                 Nome do processo que estava sendo executado antes do erro.
-            
-            * bot: `WebBot`
-                Objeto WebBot do botcity, usado para realizar a captura de tela.
         
         '''
         msg_list = traceback.format_exc().splitlines()

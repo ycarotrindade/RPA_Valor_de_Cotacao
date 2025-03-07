@@ -405,6 +405,17 @@ def compare_quotation(df_output:pd.DataFrame, output_file_path,logger):
         raise    
 
 def make_endereco(df:pd.DataFrame):
+    '''Reduz as colunas logradouro, número e município para endereço
+    
+    # Argumentos
+        df: `pd.DataFrame`
+            DataFrame original
+    
+    # Retorno
+        DataFrame com a nova coluna endereço
+    
+    '''
+    
     endereco_cols = ["LOGRADOURO", "NÚMERO", "MUNICÍPIO"]
     if all(col in df.columns for col in endereco_cols):
         df["ENDEREÇO"] = df[endereco_cols].agg(lambda x: ', '.join(x.dropna().astype(str)), axis=1)
@@ -421,6 +432,22 @@ def merge_dataframes(df1: pd.DataFrame,df2:pd.DataFrame):
 >>>>>>> origin/main
 =======
 def make_jadlog_correios_dataframes(df_output:pd.DataFrame,api_data:pd.DataFrame,logger:IntegratedLogger):
+    '''Pega as informações do Dataframe original, junta com as informações dadas pela API e divide em três dataframes que serão usados no fluxo principal
+    
+    # Argumentos
+        df_output: `pd.DataFrame`
+            Dataframe onde ocorre as edições
+        
+        api_data: `pd.DataFrame`
+            Dataframe onde contém as informações retornadas pela API
+        
+        logger: `IntegratedLogger`
+            Logger usado para gerar arquivos de log
+    
+    # Retorno
+        Três dataframes, o de saída editado, o utilzado no processo dos correios e o utilizado no jadlog
+    
+    '''
     correios_columns = ['CNPJ','DIMENSÕES CAIXA (altura x largura x comprimento cm)','PESO DO PRODUTO','TIPO DE SERVIÇO CORREIOS','CEP']
     jadlog_columns = ['CNPJ','TIPO DE SERVIÇO JADLOG','DIMENSÕES CAIXA (altura x largura x comprimento cm)','PESO DO PRODUTO','CEP','VALOR DO PEDIDO']
     df_output = df_output.set_index('CNPJ')
