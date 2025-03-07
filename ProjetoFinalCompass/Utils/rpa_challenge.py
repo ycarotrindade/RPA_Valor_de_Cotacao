@@ -8,6 +8,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 import time
 import logging
 import os
+from config import vars_map
 
 # Configuração de logging
 # log_file_path = r"C:\RPA\RPA_Valor_de_Cotacao\ProjetoFinalCompass\log\arquivo_de_log.txt"
@@ -96,9 +97,7 @@ def close_browser(driver,logger):
 
 def rpa_challenge(logger,df):
     """Função principal para orquestrar a execução do script."""
-    excel_path = r"C:\RPA\RPA_Valor_de_Cotacao\ProjetoFinalCompass\Processar\dados_completos.xlsx"
     image_path = r"C:\RPA\RPA_Valor_de_Cotacao\ProjetoFinalCompass\img"
-    logger.info(f"Iniciando execução do script com arquivo Excel: {excel_path}")
     try:
         data = df
         logger.info(f"Arquivo carregado com sucesso!")
@@ -108,7 +107,7 @@ def rpa_challenge(logger,df):
 
     driver = initialize_browser(logger)
     try:
-        access_website(driver, "https://www.rpachallenge.com/",logger)
+        access_website(driver, vars_map['DEFAUT_RPACHALLENGE_URL'],logger)
         #start_challenge(driver,logger)
         fill_form_data(driver, data,logger)
         #execution_time = capture_execution_time(driver,logger)

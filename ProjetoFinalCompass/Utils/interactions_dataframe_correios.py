@@ -39,7 +39,7 @@ def interaction_df_correios(
         except Exception as err:
             df_output.loc[df_output["CNPJ"] == cnpj, "STATUS"] = err # em todos os df_output.loc[df_output["CNPJ"] == cnpj, "STATUS"] = err  
             # tratamento de erro "variáveis teste {index} não aprovadas."
-            logger.error('Teste de variáveis')
+            logger.info('Variáveis não aprovadas')
             continue
         try:
             # log: inicia iteração {index} no site dos correios.
@@ -64,4 +64,4 @@ def interaction_df_correios(
             # tratar erro: problema na iteração {index} no site dos correios
             logger.error(f'problema na iteração {index} no site dos correios')
             continue
-    return df_filtered, df_output
+    return df_output

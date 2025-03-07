@@ -6,6 +6,7 @@ from botcity.web import WebBot
 import traceback
 import sys
 from PIL import ImageGrab
+from .email_functions import send_error_email
 
 class IntegratedLogger:
     '''Classe que integra logs locais e logs do botcity.
@@ -56,7 +57,7 @@ class IntegratedLogger:
         '''Configurações de loggers, não deve ser chamada fora da classe'''
         
         self.filepath = os.path.join(self.filepath,datetime.now().strftime('%d-%m-%Y'))
-        self.image_filepath = os.path.join(self.filepath,'Images')
+        self.image_filepath = os.path.join(self.filepath,'Errors')
         self.filepath = os.path.join(self.filepath,'Files')
         os.makedirs(self.filepath,exist_ok=True)
         os.makedirs(self.image_filepath,exist_ok=True)
@@ -75,7 +76,6 @@ class IntegratedLogger:
         client_logger_file_handler.setLevel(logging.INFO)
         client_logger_file_handler.setFormatter(logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s',datefmt=self.datetime_format))
         self.client_logger.addHandler(client_logger_file_handler)
-        
         
         
 
@@ -139,6 +139,7 @@ class IntegratedLogger:
         self.client_logger.warning(msg_reduced)
         image_filepath = os.path.join(self.image_filepath,f'{datetime.now().strftime(self.datetime_file_format)}_RPA_{process_name}.jpg')
         ImageGrab.grab().save(image_filepath)
+        send_error_email(process_name,msg_reduced,image_filepath)
         if self.maestro is not None:
             self.maestro.new_log_entry(
                 activity_label=self.activity_label,
@@ -171,6 +172,7 @@ class IntegratedLogger:
         self.client_logger.error(msg_reduced)
         image_filepath = os.path.join(self.image_filepath,f'{datetime.now().strftime(self.datetime_file_format)}_RPA_{process_name}.jpg')
         ImageGrab.grab().save(image_filepath)
+        send_error_email(process_name,msg_reduced,image_filepath)
         if self.maestro is not None:
             self.maestro.new_log_entry(
                 activity_label=self.activity_label,

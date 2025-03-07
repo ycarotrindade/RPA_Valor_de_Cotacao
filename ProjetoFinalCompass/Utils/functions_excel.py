@@ -1,5 +1,6 @@
 import os
 import time
+
 import pandas as pd
 from openpyxl.styles import PatternFill
 from openpyxl import load_workbook
@@ -7,7 +8,7 @@ from openpyxl import load_workbook
 from Utils.IntegratedLogger import IntegratedLogger
 
 
-def open_excel_file_to_dataframe(input_file_path,logger):
+def open_excel_file_to_dataframe(input_file_path, logger):
     """ 
     Abre o arquivo excel em um DataFrame, faz modificações necessárias para o projeto e retona o DataFrame 
     
@@ -43,7 +44,7 @@ def open_excel_file_to_dataframe(input_file_path,logger):
         raise
 
 
-def create_output_dataframe(df_input,logger):
+def create_output_dataframe(df_input, logger):
     """
     Cria um DataFrame vazio com colunas predefinidas.
     
@@ -84,7 +85,7 @@ def create_output_dataframe(df_input,logger):
         raise
 
 
-def save_df_output_to_excel(output_path, df_output,logger):
+def save_df_output_to_excel(output_path, df_output, logger):
     """
     Salva o DataFrame em um arquivo Excel no caminho especificado.
     
@@ -121,27 +122,7 @@ def save_df_output_to_excel(output_path, df_output,logger):
         raise
 
 
-def split_columns_box(df_to_split,logger):
-    try:
-        logger.info("Iniciando as modificações necessarias do DataFrame")
-        # Adiciona colunas para as dimensões dos produtos
-        # ! deixar essa parte em um uma função separada para criar um df_output_quotation ?
-        df_to_split[['ALTURA', 'LARGURA', 'COMPRIMENTO']] = df_to_split[
-            'DIMENSÕES CAIXA (altura x largura x comprimento cm)'
-            ].str.extract(r"(\d+)x(\d+)x(\d+)")
-        logger.debug(f"Foram acrescentadas as colunas 'ALTURA', 'LARGURA', 'COMPRIMENTO' ao DataFrame.")
-        logger.info("O arquivo foi modificado com sucesso. O DataFrame está pronto para uso.")
-        df_input_split = df_to_split
-
-        return df_input_split
-
-    except Exception as erro:
-        logger.error('Execução split_columnms_box')
-        # Para o processo para depuração manual
-        raise    
-
-
-def clean_df_if_null(df_to_clean,na_not_allowed_columns ,logger):
+def clean_df_if_null(df_to_clean, na_not_allowed_columns, logger):
     """
     Remove linhas com células vazias de um DataFrame e registra os CNPJs e as colunas com células vazias.
     
@@ -198,7 +179,7 @@ def clean_df_if_null(df_to_clean,na_not_allowed_columns ,logger):
         raise
 
 
-def write_if_null_output(df_output, empty_cells:list,logger):
+def write_if_null_output(df_output, empty_cells, logger):
     """
     Atualiza a coluna 'Status' no DataFrame de saída com informações sobre células vazias.
 
@@ -232,7 +213,7 @@ def write_if_null_output(df_output, empty_cells:list,logger):
         raise    
 
 
-def compare_quotation(df_output:pd.DataFrame, output_file_path,logger):
+def compare_quotation(df_output, output_file_path, logger):
     """
     Compara os valores de cotação e destaca o menor valor em um arquivo Excel.
 
@@ -291,51 +272,85 @@ def compare_quotation(df_output:pd.DataFrame, output_file_path,logger):
         # Para o processo para depuração manual
         raise    
 
-def make_endereco(df:pd.DataFrame):
-    '''Reduz as colunas logradouro, número e município para endereço
+
+def make_endereco(df, logger):
+    """
+    Combina as colunas de logradouro, número e município em uma única coluna de endereço.
     
-    # Argumentos
-        df: `pd.DataFrame`
-            DataFrame original
+    Args:
+        df (pd.DataFrame): DataFrame original contendo as colunas 'LOGRADOURO', 'NÚMERO' e 'MUNICÍPIO'.
     
-    # Retorno
-        DataFrame com a nova coluna endereço
+    Returns:
+        pd.DataFrame: DataFrame com a nova coluna 'ENDEREÇO' e sem as colunas originais.
     
-    '''
+    """
     
     endereco_cols = ["LOGRADOURO", "NÚMERO", "MUNICÍPIO"]
-    if all(col in df.columns for col in endereco_cols):
+    
+    try:
+        # Verifica se todas as colunas necessárias estão presentes no DataFrame
+        if not all(col in df.columns for col in endereco_cols):
+            raise ValueError("O DataFrame deve conter as colunas 'LOGRADOURO', 'NÚMERO' e 'MUNICÍPIO'.")
+        
+        # Cria a nova coluna 'ENDEREÇO' concatenando as colunas necessárias
         df["ENDEREÇO"] = df[endereco_cols].agg(lambda x: ', '.join(x.dropna().astype(str)), axis=1)
+        
+        # Remove as colunas originais que foram combinadas
         df.drop(columns=endereco_cols, inplace=True)
-    return df
+        return df
+    
+    except Exception as erro:
+        logger.error('Execução make_endereco')
+        # Para o processo para depuração manual
+        raise   
 
-def make_jadlog_correios_dataframes(df_output:pd.DataFrame,api_data:pd.DataFrame,logger:IntegratedLogger):
-    '''Pega as informações do Dataframe original, junta com as informações dadas pela API e divide em três dataframes que serão usados no fluxo principal
+
+def make_jadlog_correios_dataframes(df_output, api_data, logger):
+    """
+    Pega as informações do Dataframe original, junta com as informações dadas pela API 
+    e divide em três dataframes que serão usados no fluxo principal.
     
-    # Argumentos
-        df_output: `pd.DataFrame`
-            Dataframe onde ocorre as edições
+    Args:
+        df_output (pd.DataFrame): Dataframe onde ocorrem as edições.
+        api_data (pd.DataFrame): Dataframe contendo as informações retornadas pela API.
+        logger (IntegratedLogger): Logger usado para gerar arquivos de log.
+    
+    Returns:
+        tuple: Três dataframes - o de saída editado, o utilizado no processo dos correios e o utilizado no jadlog.
+
+    """
+    
+    correios_columns = ['CNPJ','DIMENSÕES CAIXA (altura x largura x comprimento cm)',
+                        'PESO DO PRODUTO','TIPO DE SERVIÇO CORREIOS',
+                        'CEP']
+    jadlog_columns = ['CNPJ','TIPO DE SERVIÇO JADLOG',
+                    'DIMENSÕES CAIXA (altura x largura x comprimento cm)','PESO DO PRODUTO',
+                    'CEP','VALOR DO PEDIDO']
+    
+    try:
+        # Ajusta os índices dos DataFrames para CNPJ
+        df_output = df_output.set_index('CNPJ')
+        api_data = api_data.set_index('CNPJ')
         
-        api_data: `pd.DataFrame`
-            Dataframe onde contém as informações retornadas pela API
+        # Atualiza df_output com dados da API
+        df_output.update(api_data)
+        df_output = df_output.reset_index()
         
-        logger: `IntegratedLogger`
-            Logger usado para gerar arquivos de log
-    
-    # Retorno
-        Três dataframes, o de saída editado, o utilzado no processo dos correios e o utilizado no jadlog
-    
-    '''
-    correios_columns = ['CNPJ','DIMENSÕES CAIXA (altura x largura x comprimento cm)','PESO DO PRODUTO','TIPO DE SERVIÇO CORREIOS','CEP']
-    jadlog_columns = ['CNPJ','TIPO DE SERVIÇO JADLOG','DIMENSÕES CAIXA (altura x largura x comprimento cm)','PESO DO PRODUTO','CEP','VALOR DO PEDIDO']
-    df_output = df_output.set_index('CNPJ')
-    api_data = api_data.set_index('CNPJ')
-    df_output.update(api_data)
-    df_output = df_output.reset_index()
-    df_correios, empty_cells = clean_df_if_null(df_output[correios_columns],correios_columns,logger)
-    df_output = write_if_null_output(df_output,empty_cells,logger)
-    df_jadlog, empty_cells = clean_df_if_null(df_output[jadlog_columns],jadlog_columns,logger)
-    df_jadlog = df_jadlog.astype(str)
-    df_jadlog['VALOR DO PEDIDO'] = df_jadlog['VALOR DO PEDIDO'].apply(lambda x:x.replace('.',','))
-    df_output = write_if_null_output(df_output,empty_cells,logger)
-    return df_output, df_correios, df_jadlog
+        # Limpa e prepara DataFrame para Correios
+        df_correios, empty_cells = clean_df_if_null(df_output[correios_columns], correios_columns, logger)
+        df_output = write_if_null_output(df_output, empty_cells, logger)
+        
+        # Limpa e prepara DataFrame para JadLog
+        df_jadlog, empty_cells = clean_df_if_null(df_output[jadlog_columns], jadlog_columns, logger)
+        df_jadlog = df_jadlog.astype(str)
+        df_jadlog['VALOR DO PEDIDO'] = df_jadlog['VALOR DO PEDIDO'].apply(lambda x: x.replace('.', ','))
+        
+        # Registra as células vazias no DataFrame de saída
+        df_output = write_if_null_output(df_output, empty_cells, logger)
+        
+        return df_output, df_correios, df_jadlog
+
+    except Exception as erro:
+        logger.error('Execução make_jadlog_correios_dataframes')
+        # Para o processo para depuração manual
+        raise   

@@ -53,7 +53,7 @@ def query_brasilapi(cnpj: str,logger:IntegratedLogger) -> tuple:  # Retorna uma 
         response.raise_for_status()
         return response.json(), "sucesso"  # Retorna dados e status "sucesso"
     except requests.exceptions.RequestException as e:
-        logger.error(f"Processo consultar CNPJ {cnpj}")
+        logger.info(f"Erro ao consultar CNPJ {cnpj}")
         return None, "falha"  # Retorna None e status "falha"
 
 def create_companies_dataframe(companies_data: list,logger:IntegratedLogger) -> pd.DataFrame:
