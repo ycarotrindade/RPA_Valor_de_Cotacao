@@ -240,8 +240,8 @@ def compare_quotation(df_output, output_file_path, logger):
         logger.info("Arquivo Excel carregado com sucesso")
         
         # Definir a cor de preenchimento: verde
-        green_fill = PatternFill(start_color='008000', 
-                                end_color='008000', 
+        green_fill = PatternFill(start_color='33CC33', 
+                                end_color='33CC33', 
                                 fill_type='solid')
         
         # Pintar a célula com o menor valor de verde

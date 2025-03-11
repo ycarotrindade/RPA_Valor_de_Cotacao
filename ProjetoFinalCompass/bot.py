@@ -17,39 +17,25 @@ load_dotenv(override=True)
 
 IS_MAESTRO_CONNECTED = vars_map['IS_MAESTRO_CONNECTED']
 ACTIVITY_LABEL = vars_map['ACTIVITY_LABEL']
-BASE_LOG_PATH = vars_map
 
 # Disable errors if we are not connected to Maestro
 BotMaestroSDK.RAISE_NOT_CONNECTED = not IS_MAESTRO_CONNECTED
 
 
 def main():
-    global BASE_LOG_PATH
     # Verifica se o maestro está conectado e seleciona de acordo
-    BASE_LOG_PATH = vars_map['BASE_LOG_PATH']
-    DEFAULT_PROCESSADOS_PATH = vars_map['DEFAULT_PROCESSADOS_PATH']
-    DEFAULT_PROCESSAR_PATH = vars_map['DEFAULT_PROCESSAR_PATH']
     maestro = vars_map['DEFAULT_MAESTRO']
     execution = vars_map['DEFAULT_EXECUTION']
-    
-    bot = WebBot()
-
-    bot.headless = False
-
-    # Chrome como browser padrão
-    bot.browser = Browser.CHROME
-
-    # Informando webdriver
-    bot.driver_path = ChromeDriverManager().install()
+    bot = vars_map['DEFAULT_BOT']
     
     # Iniciando logger 
-    logger = IntegratedLogger(maestro=maestro,filepath=BASE_LOG_PATH,activity_label=ACTIVITY_LABEL)
+    logger = IntegratedLogger(maestro=maestro,filepath=vars_map['BASE_LOG_PATH'],activity_label=vars_map['ACTIVITY_LABEL'])
 
     try:
         logger.info('='*10 + " Início do Processo: RPA VALOR COTAÇÃO " + "="*10)
         
         # Cria um DataFrame com os dados de entrada do arquivo Excel 
-        df = open_excel_file_to_dataframe(os.path.join(DEFAULT_PROCESSAR_PATH,'Planilha de Entrada Grupos.xlsx'), logger)
+        df = open_excel_file_to_dataframe(os.path.join(vars_map['DEFAULT_PROCESSAR_PATH'],'Planilha de Entrada Grupos.xlsx'), logger)
         # Cria um DataFrame para receber os dados de saída
         df_output = create_output_dataframe(df, logger)
 
@@ -70,7 +56,7 @@ def main():
         df_output = catchJadlogPrice(bot=bot,maestro=maestro,df_filtered=df_jadlog,df_output=df_output,logger=logger)
 
         # Salva o DataFrame de saída em um arquivo Excel (.xlsx)
-        output_file = save_df_output_to_excel(DEFAULT_PROCESSADOS_PATH,df_output, logger)
+        output_file = save_df_output_to_excel(vars_map['DEFAULT_PROCESSADOS_PATH'],df_output, logger)
         # Faz a comparação entre as cotações do Correios e JadLog e preenche de verde a célula de menor valor
         compare_quotation(df_output,output_file, logger)
 

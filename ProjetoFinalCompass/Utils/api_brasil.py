@@ -51,7 +51,7 @@ def query_brasilapi(cnpj: str,logger:IntegratedLogger) -> tuple:  # Retorna uma 
             }
         response = requests.get(url=url,headers=headers,timeout=10)
         response.raise_for_status()
-        return response.json(), "sucesso"  # Retorna dados e status "sucesso"
+        return response.json(), "Sucesso"  # Retorna dados e status "sucesso"
     except requests.exceptions.RequestException as e:
         logger.info(f"Erro ao consultar CNPJ {cnpj}")
         return None, "falha"  # Retorna None e status "falha"

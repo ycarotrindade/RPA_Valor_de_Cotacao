@@ -2,8 +2,14 @@ import os
 from botcity.web import WebBot, Browser, By
 from botcity.maestro import *
 from dotenv import load_dotenv
+from webdriver_manager.chrome import ChromeDriverManager
 
 load_dotenv(override=True)
+
+bot = WebBot()
+bot.headless = False
+bot.browser = Browser.CHROME
+bot.driver_path = ChromeDriverManager().install()
 
 IS_MAESTRO_CONNECTED = eval(os.getenv('IS_MAESTRO_CONNECTED'))
 if IS_MAESTRO_CONNECTED:
@@ -47,6 +53,7 @@ vars_map = {
     'DEFAULT_BRASILAPI_URL':DEFAULT_BRASILAPI_URL,
     'DEFAUT_RPACHALLENGE_URL':DEFAUT_RPACHALLENGE_URL,
     'DEFAULT_MAESTRO':maestro,
+    'DEFAULT_BOT':bot,
     'DEFAULT_EMAILS_FILE':DEFAULT_EMAILS_FILE,
     'DEFAULT_EXECUTION':execution,
     'ORIGIN_CEP':ORIGIN_CEP,
