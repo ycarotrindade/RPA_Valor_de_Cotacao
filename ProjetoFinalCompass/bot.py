@@ -1,16 +1,13 @@
-# Importa o webbot
-from botcity.web import WebBot, Browser, By
-
-# Importa o maestro
-from botcity.maestro import *
-
-# Importa outras bibliotecas necessárias
-from Utils import *
-from webdriver_manager.chrome import ChromeDriverManager
-from dotenv import load_dotenv
 import os
+
+from dotenv import load_dotenv
+from webdriver_manager.chrome import ChromeDriverManager
 import pandas as pd
+
+from botcity.maestro import *
+from botcity.web import WebBot, Browser, By
 from config import vars_map
+from Utils import *
 
 # Define algumas variáveis globais
 load_dotenv(override=True)
@@ -32,35 +29,28 @@ def main():
     logger = IntegratedLogger(maestro=maestro,filepath=vars_map['BASE_LOG_PATH'],activity_label=vars_map['ACTIVITY_LABEL'])
 
     try:
-        logger.info('='*10 + " Início do Processo: RPA VALOR COTAÇÃO " + "="*10)
+        logger.info(f"{'='*10} Início do Processo: RPA VALOR COTAÇÃO {'='*10}")
         
-        # Cria um DataFrame com os dados de entrada do arquivo Excel 
-        df = open_excel_file_to_dataframe(os.path.join(vars_map['DEFAULT_PROCESSAR_PATH'],'Planilha de Entrada Grupos.xlsx'), logger)
-        # Cria um DataFrame para receber os dados de saída
+        # Leitura dos dados de entrada
+        input_path = os.path.join(vars_map['DEFAULT_PROCESSAR_PATH'], 'Planilha de Entrada Grupos.xlsx')
+        df = open_excel_file_to_dataframe(input_path, logger)
         df_output = create_output_dataframe(df, logger)
 
-        # Faz requisição no site Brasil API e retorna os resultados nos DataFrames de saída e para as cotações
+        # Processamento de cotações
         api_data, df_output = api_data_lookup(df_output, logger)
-
-        # Cria uma coluna única para o endereço
         api_data = make_endereco(api_data, logger)
-        # Cria DataFrames para trabalhar com as cotações de Correios e JadLog, e preenche dados no DataFrame de saída
-        df_output, df_correios, df_jadlog = make_jadlog_correios_dataframes(df_output,api_data, logger)
+        df_output, df_correios, df_jadlog = make_jadlog_correios_dataframes(df_output, api_data, logger)
 
-        # Realiza o preenchimento das informações no site RPA Challenge
+        # Interações com sites externos
         rpa_challenge(df=api_data, logger=logger)
+        df_output = interaction_df_correios(df_filtered=df_correios, df_output=df_output, bot=bot, logger=logger)
+        df_output = catchJadlogPrice(bot=bot, maestro=maestro, df_filtered=df_jadlog, df_output=df_output, logger=logger)gger=logger)
 
-        # Faz a cotação dos preços no site do Correios e retorna os resultados para o DataFrame de saída
-        df_output = interaction_df_correios(df_filtered=df_correios,df_output=df_output,bot=bot,logger=logger)
-        # Faz a cotação dos preços no site da JadLog e retorna os resultados para o DataFrame de saída
-        df_output = catchJadlogPrice(bot=bot,maestro=maestro,df_filtered=df_jadlog,df_output=df_output,logger=logger)
+         # Salva resultados e realiza comparações
+        output_file = save_df_output_to_excel(vars_map['DEFAULT_PROCESSADOS_PATH'], df_output, logger)
+        compare_quotation(df_output, output_file, logger)
 
-        # Salva o DataFrame de saída em um arquivo Excel (.xlsx)
-        output_file = save_df_output_to_excel(vars_map['DEFAULT_PROCESSADOS_PATH'],df_output, logger)
-        # Faz a comparação entre as cotações do Correios e JadLog e preenche de verde a célula de menor valor
-        compare_quotation(df_output,output_file, logger)
-
-        # Faz o envio de e-mails da finalização do processo com arquivo Excel dos dados de saída 
+        # Envia o resultado por e-mail
         send_emails(output_file)
         
     except:
