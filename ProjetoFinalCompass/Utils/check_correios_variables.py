@@ -2,7 +2,7 @@ import pandas as pd
 from pandas import Series
 
 
-def check_variables(row: Series):
+def check_variables(row: Series) -> tuple[dict, str, str, str]:
     """
     Verifica as variáveis usadas no site dos correios.
 
@@ -15,17 +15,27 @@ def check_variables(row: Series):
     Args:
         row (Series): uma série de dados pandas.
 
-    Return: None.
+    Raises:
+        ValueError: se alguma das variáveis testadas estiver vazia ou se as
+            dimensões da embalagem estiverem fora dos critérios dos correios.
+
+    Return:
+        tuple[dict, str, str, str]: uma tupla contendo:
+            - um dicionário contendo as dimensões da embalagem.
+            - uma string contendo o peso estimado.
+            - uma string contendo o tipo de serviço postal.
+            - uma string contendo o cep de destino.
     """
 
-    # como guardar CONSTANTE? (.env? config.py? outra solução?)
     PACKAGE_DIMENSIONS_KEYS = [
         "height",
         "width",
         "length",
     ]
     try:
-        package_dimensions_values = row["DIMENSÕES CAIXA (altura x largura x comprimento cm)"]
+        package_dimensions_values = row[
+            "DIMENSÕES CAIXA (altura x largura x comprimento cm)"
+        ]
         weight = row["PESO DO PRODUTO"]
         postal_service = row["TIPO DE SERVIÇO CORREIOS"]
         cep_destiny = str(row["CEP"])
@@ -44,8 +54,7 @@ def check_variables(row: Series):
                     package_dimensions_values,
                 )
             )
-            # print de verificação. eliminar depois.
-            print(package_dimensions)
+
             if not are_package_dimensions_valid(**package_dimensions):
                 raise ValueError("Erro ao realizar cotação Correios.")
 
